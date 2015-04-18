@@ -26,6 +26,7 @@ public final class Plugin extends JavaPlugin implements Listener {
 		AlarmTrigger.get().enable(this);
 		setShiftTimer();	
 		getServer().getPluginManager().registerEvents(this._events, this);
+		PlayerInfo.initialize(eithonPlugin);
 	}
 
 	private void setShiftTimer() {
