@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.json.Converter;
 import net.eithon.library.json.PlayerCollection;
-import net.eithon.library.misc.Debug.DebugPrintLevel;
+import net.eithon.library.plugin.Logger.DebugPrintLevel;
 import net.eithon.library.plugin.ConfigurableMessage;
 import net.eithon.library.plugin.Configuration;
 import net.eithon.library.time.AlarmTrigger;
@@ -17,7 +17,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.json.simple.JSONObject;
 public class BoardController {
@@ -37,7 +36,7 @@ public class BoardController {
 
 	private BoardModel _model;
 	private BoardView _view;
-	private EithonPlugin _plugin = null;
+	private EithonPlugin _eithonPlugin = null;
 
 	private BoardController() {
 	}
@@ -51,7 +50,7 @@ public class BoardController {
 	}
 
 	void enable(EithonPlugin eithonPlugin){
-		this._plugin = eithonPlugin;
+		this._eithonPlugin = eithonPlugin;
 		Configuration config = eithonPlugin.getConfiguration();
 		numberOfDays = config.getInt("Days", 31);
 		numberOfLevels = config.getInt("Levels", 5);
@@ -78,7 +77,7 @@ public class BoardController {
 		this._model = null;
 		this._view = null;
 		this._knownPlayers = new PlayerCollection<PlayerInfo>(new PlayerInfo());
-		this._plugin = null;
+		this._eithonPlugin = null;
 	}
 
 	void increasePerkLevel(Player player, Block block) {
@@ -117,7 +116,7 @@ public class BoardController {
 	public void saveNow()
 	{
 		if (this._view == null) return;
-		File jsonFile = new File(this._plugin.getJavaPlugin().getDataFolder(), "donations.json");
+		File jsonFile = new File(this._eithonPlugin.getJavaPlugin().getDataFolder(), "donations.json");
 		JSONObject payload = new JSONObject();
 		payload.put("view", this._view.toJson());
 		payload.put("players", this._knownPlayers.toJson());
@@ -128,8 +127,8 @@ public class BoardController {
 	}
 
 	private void delayedLoad() {
-		BukkitScheduler scheduler = this._plugin.getJavaPlugin().getServer().getScheduler();
-		scheduler.scheduleSyncDelayedTask(this._plugin.getJavaPlugin(), new Runnable() {
+		BukkitScheduler scheduler = this._eithonPlugin.getJavaPlugin().getServer().getScheduler();
+		scheduler.scheduleSyncDelayedTask(this._eithonPlugin.getJavaPlugin(), new Runnable() {
 			public void run() {
 				loadNow();
 			}
@@ -137,15 +136,15 @@ public class BoardController {
 	}
 
 	void loadNow() {
-		File file = new File(this._plugin.getJavaPlugin().getDataFolder(), "donations.json");
-		JSONObject data = Converter.load(_plugin, file);
+		File file = new File(this._eithonPlugin.getJavaPlugin().getDataFolder(), "donations.json");
+		JSONObject data = Converter.load(this._eithonPlugin, file);
 		if (data == null) {
-			this._plugin.getDebug().debug(DebugPrintLevel.MAJOR, "The file was empty.");
+			this._eithonPlugin.getLogger().debug(DebugPrintLevel.MAJOR, "The file was empty.");
 			return;			
 		}
 		JSONObject payload = (JSONObject)Converter.toBodyPayload(data);
 		if (payload == null) {
-			this._plugin.getDebug().warning("The donation board payload was empty.");
+			this._eithonPlugin.getLogger().warning("The donation board payload was empty.");
 			return;
 		}
 		this._view.fromJson((JSONObject)payload.get("view"));
@@ -262,7 +261,7 @@ public class BoardController {
 
 	private void delayedRefresh() {
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-		scheduler.scheduleSyncDelayedTask(this._plugin.getJavaPlugin(), new Runnable() {
+		scheduler.scheduleSyncDelayedTask(this._eithonPlugin.getJavaPlugin(), new Runnable() {
 			public void run() {
 				refreshNow();
 			}
@@ -283,7 +282,7 @@ public class BoardController {
 
 	private void delayedSave() {
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-		scheduler.scheduleSyncDelayedTask(this._plugin.getJavaPlugin(), new Runnable() {
+		scheduler.scheduleSyncDelayedTask(this._eithonPlugin.getJavaPlugin(), new Runnable() {
 			public void run() {
 				saveNow();
 			}
@@ -335,7 +334,7 @@ public class BoardController {
 				playerInfo.getTotalMoneyDonated()));	
 	}
 
-	private static boolean isInMandatoryWorld(World world) 
+	static boolean isInMandatoryWorld(World world) 
 	{
 		if (mandatoryWorld == null) return true;
 		return world.getName().equalsIgnoreCase(mandatoryWorld);
