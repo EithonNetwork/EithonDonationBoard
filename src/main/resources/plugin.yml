@@ -1,0 +1,46 @@
+name: EithonDonationBoard
+main: net.eithon.plugin.donationboard.Plugin
+version: 1.0
+author: vanbrayne
+description: A Minecraft plugin for keeping scores of donations on a donation board
+depend: [EithonLibrary]
+commands:
+  donationboard:
+    description: Control the donation board
+    usage: /donationboard shift | print | load | save | register | donate | goto | stats
+    permission-message: You don't have <permission>
+permissions:
+  donationboard.*:
+    description: Gives access to all donationboard commands
+    default: op
+    donationboard.shift: true
+    donationboard.print: true
+    donationboard.load: true
+    donationboard.save: true
+    donationboard.goto: true
+    donationboard.register: true
+    donationboard.stats: true
+  donationboard.shift:
+    description: Access to /donationboard shift command
+    default: op
+  donationboard.print:
+    description: Access to /donationboard print command
+    default: op
+  donationboard.load:
+    description: Access to /donationboard load command
+    default: op
+  donationboard.save:
+    description: Access to /donationboard save command
+    default: op
+  donationboard.register:
+    description: Access to /donationboard register command
+    default: op
+  donationboard.donate:
+    description: Access to /donationboard donate command
+    default: op
+  donationboard.goto:
+    description: Access to /donationboard goto command
+    default: op
+  donationboard.stats:
+    description: Access to /donationboard stats command
+    default: op

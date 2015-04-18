@@ -1,0 +1,26 @@
+Days: 31
+Levels: 5
+MandatoryWorld: W_DonationBoard
+PerkClaimAfterSeconds: 20
+
+commands:
+  #
+  # Parameters: <player>(%s) <perk level>(%d)
+  AddGroupCommand: perm player %s addgroup PerkLevel%d
+
+  #
+  # Parameters: <player>(%s) <perk level>(%d)
+  RemoveGroupCommand: perm player %s removegroup PerkLevel%d
+
+messages:
+  #
+  # No parameters
+  NeedTokens: You must have E-tokens to raise the perk level.
+
+  #
+  # No parameters
+  HowToGetTokens: You get E-tokens by donating money at http://eithon.org/donate.
+
+  #
+  # Parameters: <player name> (%s)
+  PlayerHasDonated: Player %s has made a donation for today!
