@@ -6,6 +6,8 @@ import java.time.LocalTime;
 
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.time.AlarmTrigger;
+import net.eithon.plugin.donationboard.logic.BoardController;
+import net.eithon.plugin.donationboard.logic.PlayerInfo;
 
 public final class Plugin extends EithonPlugin {
 	private BoardController _controller;

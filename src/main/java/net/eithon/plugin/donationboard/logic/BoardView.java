@@ -1,4 +1,4 @@
-package net.eithon.plugin.donationboard;
+package net.eithon.plugin.donationboard.logic;
 
 import net.eithon.library.json.Converter;
 import net.eithon.library.json.IJson;

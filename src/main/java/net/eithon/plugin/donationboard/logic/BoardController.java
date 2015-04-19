@@ -1,4 +1,4 @@
-package net.eithon.plugin.donationboard;
+package net.eithon.plugin.donationboard.logic;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -66,7 +66,7 @@ public class BoardController {
 		this._eithonPlugin = null;
 	}
 
-	void increasePerkLevel(Player player, Block block) {
+	public void increasePerkLevel(Player player, Block block) {
 		if (!playerHasTokens(player)) {
 			this._needTokensMessage.sendMessage(player);
 			this._howToGetTokensMessage.sendMessage(player);
@@ -121,7 +121,7 @@ public class BoardController {
 		}, 200L);
 	}
 
-	void loadNow() {
+	public void loadNow() {
 		File file = new File(this._eithonPlugin.getDataFolder(), "donations.json");
 		JSONObject data = Converter.load(this._eithonPlugin, file);
 		if (data == null) {

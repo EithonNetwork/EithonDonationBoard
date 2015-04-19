@@ -1,4 +1,4 @@
-package net.eithon.plugin.donationboard;
+package net.eithon.plugin.donationboard.logic;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

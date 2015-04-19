@@ -1,4 +1,4 @@
-package net.eithon.plugin.donationboard;
+package net.eithon.plugin.donationboard.logic;
 
 import java.util.UUID;
 
@@ -35,7 +35,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	private boolean _isDonatorOnTheBoard;
 	private boolean _hasBeenToBoard;
 
-	static void initialize(EithonPlugin eithonPlugin)
+	public static void initialize(EithonPlugin eithonPlugin)
 	{
 		currentEithonPlugin = eithonPlugin;
 		Configuration config = currentEithonPlugin.getConfiguration();

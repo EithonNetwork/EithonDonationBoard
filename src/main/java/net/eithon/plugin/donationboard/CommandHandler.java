@@ -4,6 +4,7 @@ import net.eithon.library.extensions.EithonPlayer;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.plugin.CommandParser;
 import net.eithon.library.plugin.ICommandHandler;
+import net.eithon.plugin.donationboard.logic.BoardController;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
