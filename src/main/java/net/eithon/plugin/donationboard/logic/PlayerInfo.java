@@ -94,6 +94,21 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	PlayerInfo() {
 	}
 
+	@Override
+	public PlayerInfo factory() {
+		return new PlayerInfo();
+	}
+
+	@Override
+	public void fromJson(Object json) {
+		JSONObject jsonObject = (JSONObject) json;
+		this._id = Converter.toPlayerId((JSONObject) jsonObject.get("player"));
+		this._name = Converter.toPlayerName((JSONObject) jsonObject.get("player"));
+		this._remainingDonationTokens = (int) jsonObject.get("remainingDonationTokens");
+		this._totalTokensDonated = (long) jsonObject.get("totalTokensDonated");
+		this._totalMoneyDonated = (double) jsonObject.get("totalMoneyDonated");
+	}
+
 	@SuppressWarnings("unchecked")
 	public JSONObject toJson() {
 		JSONObject json = new JSONObject();
@@ -243,20 +258,5 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	public String toString()
 	{
 		return String.format("%s (%d tokens): perklevel %d", this.getName(), this._remainingDonationTokens, this._perkLevel);
-	}
-
-	@Override
-	public PlayerInfo factory() {
-		return new PlayerInfo();
-	}
-
-	@Override
-	public void fromJson(Object json) {
-		JSONObject jsonObject = (JSONObject) json;
-		this._id = Converter.toPlayerId((JSONObject) jsonObject.get("player"));
-		this._name = Converter.toPlayerName((JSONObject) jsonObject.get("player"));
-		this._remainingDonationTokens = (int) jsonObject.get("remainingDonationTokens");
-		this._totalTokensDonated = (long) jsonObject.get("totalTokensDonated");
-		this._totalMoneyDonated = (double) jsonObject.get("totalMoneyDonated");
 	}
 }
