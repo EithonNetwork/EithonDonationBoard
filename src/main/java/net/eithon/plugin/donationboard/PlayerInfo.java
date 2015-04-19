@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
+	private static EithonPlugin currentEithonPlugin;
 	private static ConfigurableCommand addGroupCommand;
 	private static ConfigurableCommand removeGroupCommand;
 	private static ConfigurableMessage visitBoardMessage;
@@ -26,6 +27,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	private String _name;
 	private UUID _id;
 	private Player _player;
+	private int _numberOfLevels;
 	private int _remainingDonationTokens;
 	private double _totalMoneyDonated;
 	private long _totalTokensDonated;
@@ -35,7 +37,8 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 
 	static void initialize(EithonPlugin eithonPlugin)
 	{
-		Configuration config = eithonPlugin.getConfiguration();
+		currentEithonPlugin = eithonPlugin;
+		Configuration config = currentEithonPlugin.getConfiguration();
 		addGroupCommand = config.getConfigurableCommand("commands.AddGroup", 2,
 				"perm player %s addgroup PerkLevel%d");
 		removeGroupCommand = config.getConfigurableCommand("commands.RemoveGroup", 2,
@@ -60,6 +63,8 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 		this._remainingDonationTokens = 0;
 		this._perkLevel = 0;
 		this._hasBeenToBoard = false;
+		Configuration config = currentEithonPlugin.getConfiguration();
+		this._numberOfLevels = config.getInt("Levels", 5);
 	}
 
 	public PlayerInfo(UUID uniqueId, int remainingDonationTokens, long totalTokensDonated, double totalAmountDonated)
@@ -216,7 +221,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	}
 
 	private void resetPerkLevel(boolean force) {
-		if (force) this._perkLevel = BoardController.get().getMaxPerkLevel();
+		if (force) this._perkLevel = this._numberOfLevels;
 		demote(0, 0);
 	}
 

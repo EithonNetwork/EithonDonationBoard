@@ -7,28 +7,28 @@ import java.time.LocalTime;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.time.AlarmTrigger;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
-
-public final class Plugin extends JavaPlugin implements Listener {
-	private Events _events;
+public final class Plugin extends EithonPlugin {
+	private BoardController _controller;
 
 	@Override
 	public void onEnable() {
-		EithonPlugin eithonPlugin = EithonPlugin.get(this);
-		eithonPlugin.enable();
-		this._events = new Events();
-		this._events.enable(eithonPlugin);
-		BoardController.get().enable(eithonPlugin);
-		Commands.get().enable(eithonPlugin);
+		this._controller = new BoardController(this);
+		CommandHandler commandHandler = new CommandHandler(this, this._controller);
+		EventListener eventListener = new EventListener(this, this._controller);
+		super.enable(commandHandler, eventListener);
 		AlarmTrigger.get().enable(this);
 		setShiftTimer();	
-		getServer().getPluginManager().registerEvents(this._events, this);
-		PlayerInfo.initialize(eithonPlugin);
+		PlayerInfo.initialize(this);
 	}
 
+
+	@Override
+	public void onDisable() {
+		super.onDisable();
+		this._controller = null;
+		AlarmTrigger.get().disable();
+	}
+	
 	private void setShiftTimer() {
 		LocalDateTime alarmTime = null;
 		LocalDateTime alarmToday = LocalDateTime.of(LocalDate.now(), LocalTime.of(7,0,0));
@@ -45,19 +45,8 @@ public final class Plugin extends JavaPlugin implements Listener {
 	}
 
 	protected void keepOnShifting() {
-		BoardController.get().shiftLeft();
+		if (this._controller == null) return;
+		this._controller.shiftLeft();
 		setShiftTimer();
-	}
-
-	@Override
-	public void onDisable() {
-		BoardController.get().disable();
-		Commands.get().disable();
-		AlarmTrigger.get().disable();
-	}
-
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		return Commands.get().onCommand(sender, args);
 	}
 }

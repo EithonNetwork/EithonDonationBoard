@@ -12,16 +12,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-public final class Events implements Listener {
+public final class EventListener implements Listener {
 
-	private static String mandatoryWorld;
+	private String _mandatoryWorld;
+	private BoardController _controller;
 
-	public void enable(EithonPlugin eithonPlugin) {
+	public EventListener(EithonPlugin eithonPlugin, BoardController boardController) {	
+		this._controller = boardController;
 		Configuration config = eithonPlugin.getConfiguration();
-		mandatoryWorld = config.getString("MandatoryWorld", "");
-	}
-
-	public void disable() {
+		this._mandatoryWorld = config.getString("MandatoryWorld", "");
 	}
 
 	@EventHandler
@@ -31,10 +30,10 @@ public final class Events implements Listener {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 		switch (event.getClickedBlock().getType()) {
 		case STONE_BUTTON:
-			BoardController.get().initialize(player, event.getClickedBlock());
+			this._controller.initialize(player, event.getClickedBlock());
 			break;
 		case WOOD_BUTTON:
-			BoardController.get().increasePerkLevel(player, event.getClickedBlock());
+			this._controller.increasePerkLevel(player, event.getClickedBlock());
 			break;
 		default:
 			break;
@@ -44,19 +43,19 @@ public final class Events implements Listener {
 	@EventHandler
 	public void onPlayerJoinEvent(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		BoardController.get().playerJoined(player);
+		this._controller.playerJoined(player);
 	}
 
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		if (!isInMandatoryWorld(event.getTo().getWorld())) return;
 		Player player = event.getPlayer();
-		BoardController.get().playerTeleportedToBoard(player, event.getFrom());
+		this._controller.playerTeleportedToBoard(player, event.getFrom());
 	}
 
-	private static boolean isInMandatoryWorld(World world) 
+	private boolean isInMandatoryWorld(World world) 
 	{
-		if (mandatoryWorld == null) return true;
-		return world.getName().equalsIgnoreCase(mandatoryWorld);
+		if (this._mandatoryWorld == null) return true;
+		return world.getName().equalsIgnoreCase(this._mandatoryWorld);
 	}
 }
