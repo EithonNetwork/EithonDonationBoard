@@ -27,14 +27,13 @@ public class CommandHandler implements ICommandHandler {
 
 	public boolean onCommand(CommandParser commandParser) {
 		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1)) return true;
-		
-		String command = commandParser.getArgumentStringAsLowercase(0);
+
+		String command = commandParser.getArgumentCommand();
 		if (command.equals("donate")) {
 			donateCommand(commandParser);
 		} else {
 			if (commandParser.getPlayerOrInformSender() == null) return true;
 
-			commandParser.setCurrentCommand(command);
 			if (command.equals("shift")) {
 				shiftCommand(commandParser);
 			} else if (command.equals("print")) {
@@ -97,7 +96,7 @@ public class CommandHandler implements ICommandHandler {
 		if (!commandParser.hasPermissionOrInformSender("donationboard.register")) return;
 		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1, 2)) return;
 		
-		Player registerPlayer = commandParser.getArgumentPlayer(1, commandParser.getPlayer());
+		Player registerPlayer = commandParser.getArgumentPlayer(commandParser.getPlayer());
 		if (registerPlayer == null) {
 			commandParser.showCommandSyntax();
 			return;
@@ -118,11 +117,11 @@ public class CommandHandler implements ICommandHandler {
 		if (!commandParser.hasPermissionOrInformSender("donationboard.donate")) return;
 		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(3, 4)) return;
 
-		EithonPlayer eithonPlayer = commandParser.getArgumentEithonPlayerOrInformSender(1, null);
+		EithonPlayer eithonPlayer = commandParser.getArgumentEithonPlayerOrInformSender(null);
 		if (eithonPlayer == null) return;
 		Player donatePlayer = eithonPlayer.getPlayer();
-		int tokens = commandParser.getArgumentInteger(2, 0);
-		double amount = commandParser.getArgumentDouble(3, 0.0);
+		int tokens = commandParser.getArgumentInteger(0);
+		double amount = commandParser.getArgumentDouble(0.0);
 
 		this._controller.donate(donatePlayer, tokens, amount);
 	}
