@@ -10,6 +10,7 @@ import net.eithon.library.plugin.Logger.DebugPrintLevel;
 import net.eithon.library.plugin.ConfigurableMessage;
 import net.eithon.library.plugin.Configuration;
 import net.eithon.library.time.AlarmTrigger;
+import net.eithon.plugin.donationboard.Config;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,13 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.json.simple.JSONObject;
 public class BoardController {
-	private int _numberOfDays;
-	private int _numberOfLevels;
-	private long _perkClaimAfterSeconds;
-	private ConfigurableMessage _needTokensMessage;
-	private ConfigurableMessage _howToGetTokensMessage;
-	private ConfigurableMessage _playerHasDonatedMessage;
-
 	private static String mandatoryWorld;
 
 	private PlayerCollection<PlayerInfo> _knownPlayers;
@@ -37,25 +31,9 @@ public class BoardController {
 
 	public BoardController(EithonPlugin eithonPlugin) {
 		this._eithonPlugin = eithonPlugin;
-		Configuration config = eithonPlugin.getConfiguration();
-		this._numberOfDays = config.getInt("Days", 31);
-		this._numberOfLevels = config.getInt("Levels", 5);
-		mandatoryWorld = config.getString("MandatoryWorld", "");
-		this._perkClaimAfterSeconds = config.getInt("PerkClaimAfterSeconds", 10);
-		this._needTokensMessage = config.getConfigurableMessage("messages.NeedTokens", 0,
-				"You must have E-tokens to raise the perk level.");
-		this._howToGetTokensMessage = config.getConfigurableMessage("messages.HowToGetTokens", 0,
-				"You get E-tokens by donating money at http://eithon.org/donate.");
-		this._playerHasDonatedMessage = config.getConfigurableMessage("messages.PlayerHasDonated", 1,
-				"Player %s has made a donation for today!");
-		this._model = new BoardModel(this._numberOfDays, this._numberOfLevels);
+		this._model = new BoardModel(Config.V.numberOfDays, Config.V.numberOfLevels);
 		this._knownPlayers = new PlayerCollection<PlayerInfo>(new PlayerInfo());	
 		loadNow();
-	}
-
-	int getMaxPerkLevel()
-	{
-		return this._numberOfLevels;
 	}
 
 	void disable() {
@@ -68,8 +46,8 @@ public class BoardController {
 
 	public void increasePerkLevel(Player player, Block block) {
 		if (!playerHasTokens(player)) {
-			this._needTokensMessage.sendMessage(player);
-			this._howToGetTokensMessage.sendMessage(player);
+			Config.M.needTokens.sendMessage(player);
+			Config.M.howToGetTokens.sendMessage(player);
 			return;
 		}
 		decreasePlayerDonationTokens(player);
@@ -81,11 +59,11 @@ public class BoardController {
 	}
 
 	private void broadCastDonation(Player player) {
-		this._playerHasDonatedMessage.broadcastMessage(player.getDisplayName());
+		Config.M.playerHasDonated.broadcastMessage(player.getDisplayName());
 	}
 
 	public void initialize(Player player, Block clickedBlock) {
-		this._model = new BoardModel(this._numberOfDays, this._numberOfLevels);
+		this._model = new BoardModel(Config.V.numberOfDays, Config.V.numberOfLevels);
 		this._view = new BoardView(clickedBlock);
 		this._model.createFirstLineOfButtons();
 		delayedSave();
@@ -141,8 +119,8 @@ public class BoardController {
 		for (PlayerInfo playerInfo : this._knownPlayers) {
 			playerInfo.setIsDonatorOnTheBoard(false);
 		}
-		for (int day = 0; day <= this._numberOfDays; day++) {
-			for (int level = 0; level <= this._numberOfLevels; level++) {
+		for (int day = 0; day <= Config.V.numberOfDays; day++) {
+			for (int level = 0; level <= Config.V.numberOfLevels; level++) {
 				Donation donation = this._model.getDonationInfo(day, level);
 				if (donation == null) continue;
 				Player player = donation.getPlayer();
@@ -154,8 +132,8 @@ public class BoardController {
 	}	
 
 	private boolean isDonator(Player player) {
-		for (int day = 0; day <= this._numberOfDays; day++) {
-			for (int level = 0; level <= this._numberOfLevels; level++) {
+		for (int day = 0; day <= Config.V.numberOfDays; day++) {
+			for (int level = 0; level <= Config.V.numberOfLevels; level++) {
 				Donation donation = this._model.getDonationInfo(day, level);
 				if (donation == null) continue;
 				if (donation.getPlayer() == player) return true;
@@ -211,7 +189,7 @@ public class BoardController {
 		if (!isInMandatoryWorld(player.getWorld())) return;
 		PlayerInfo playerInfo = this._knownPlayers.get(player);
 		if (playerInfo.shouldGetPerks()) return;
-		LocalDateTime alarm = LocalDateTime.now().plusSeconds(this._perkClaimAfterSeconds);
+		LocalDateTime alarm = LocalDateTime.now().plusSeconds(Config.V.perkClaimAfterSeconds);
 		AlarmTrigger.get().setAlarm(String.format("%s can claim perk", player.getName()),
 				alarm,
 				new Runnable() {

@@ -1,7 +1,6 @@
 package net.eithon.plugin.donationboard;
 
 import net.eithon.library.extensions.EithonPlugin;
-import net.eithon.library.plugin.Configuration;
 import net.eithon.plugin.donationboard.logic.BoardController;
 
 import org.bukkit.World;
@@ -15,13 +14,11 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 public final class EventListener implements Listener {
 
-	private String _mandatoryWorld;
+
 	private BoardController _controller;
 
 	public EventListener(EithonPlugin eithonPlugin, BoardController boardController) {	
 		this._controller = boardController;
-		Configuration config = eithonPlugin.getConfiguration();
-		this._mandatoryWorld = config.getString("MandatoryWorld", "");
 	}
 
 	@EventHandler
@@ -56,7 +53,7 @@ public final class EventListener implements Listener {
 
 	private boolean isInMandatoryWorld(World world) 
 	{
-		if (this._mandatoryWorld == null) return true;
-		return world.getName().equalsIgnoreCase(this._mandatoryWorld);
+		if (Config.V.mandatoryWorld == null) return true;
+		return world.getName().equalsIgnoreCase(Config.V.mandatoryWorld);
 	}
 }

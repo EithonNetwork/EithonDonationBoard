@@ -15,6 +15,7 @@ public final class Plugin extends EithonPlugin {
 	@Override
 	public void onEnable() {
 		super.onEnable();
+		Config.load(this);
 		this._controller = new BoardController(this);
 		CommandHandler commandHandler = new CommandHandler(this, this._controller);
 		EventListener eventListener = new EventListener(this, this._controller);

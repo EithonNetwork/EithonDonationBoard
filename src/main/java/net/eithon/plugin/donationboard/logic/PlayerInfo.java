@@ -9,6 +9,7 @@ import net.eithon.library.json.IJson;
 import net.eithon.library.plugin.ConfigurableCommand;
 import net.eithon.library.plugin.ConfigurableMessage;
 import net.eithon.library.plugin.Configuration;
+import net.eithon.plugin.donationboard.Config;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,13 +17,6 @@ import org.json.simple.JSONObject;
 
 public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	private static EithonPlugin currentEithonPlugin;
-	private static ConfigurableCommand addGroupCommand;
-	private static ConfigurableCommand removeGroupCommand;
-	private static ConfigurableMessage visitBoardMessage;
-	private static ConfigurableMessage levelRaisedMessage;
-	private static ConfigurableMessage levelLoweredMessage;
-	private static ConfigurableMessage noTokensLeftMessage;
-	private static ConfigurableMessage tokensLeftMessage;
 
 	private String _name;
 	private UUID _id;
@@ -39,20 +33,6 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	{
 		currentEithonPlugin = eithonPlugin;
 		Configuration config = currentEithonPlugin.getConfiguration();
-		addGroupCommand = config.getConfigurableCommand("commands.AddGroup", 2,
-				"perm player %s addgroup PerkLevel%d");
-		removeGroupCommand = config.getConfigurableCommand("commands.RemoveGroup", 2,
-				"perm player %s removegroup PerkLevel%d");
-		visitBoardMessage = config.getConfigurableMessage("messages.VisitBoard", 1,
-				"If you visit the donationboard, you can raise your perk level to %d.");
-		levelRaisedMessage = config.getConfigurableMessage("messages.PerkLevelRaised", 1,
-				"Your perk level has been raised to %d.");
-		levelLoweredMessage = config.getConfigurableMessage("messages.PerkLevelLowered", 1,
-				"Your perk level has been lowered to %d.");
-		noTokensLeftMessage = config.getConfigurableMessage("messages.NoTokensLeft", 0,
-				"You have no E-tokens left.");
-		tokensLeftMessage = config.getConfigurableMessage("TokensLeftMessage", 1,
-				"You have %d remaining E-tokens.");
 	}
 
 	public PlayerInfo(Player player)
@@ -154,9 +134,9 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 		this._remainingDonationTokens--;
 		if (this._remainingDonationTokens < 0) this._remainingDonationTokens = 0;
 		if (this._remainingDonationTokens == 0) {
-			noTokensLeftMessage.sendMessage(getPlayer());
+			Config.M.noTokensLeft.sendMessage(getPlayer());
 		} else {
-			tokensLeftMessage.sendMessage(getPlayer(), this._remainingDonationTokens);
+			Config.M.tokensLeft.sendMessage(getPlayer(), this._remainingDonationTokens);
 		}
 	}
 
@@ -213,7 +193,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 
 	private void promote(int toLevel, int currentLevel) {
 		if (!shouldGetPerks()) {
-			visitBoardMessage.sendMessage(this.getPlayer(), toLevel);
+			Config.M.visitBoard.sendMessage(this.getPlayer(), toLevel);
 			return;
 		}
 		for (int level = this._perkLevel + 1; level <= toLevel; level++) {
@@ -221,7 +201,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 		}
 		this._perkLevel = toLevel;
 		if (toLevel > currentLevel) {
-			levelRaisedMessage.sendMessage(getPlayer(), toLevel);
+			Config.M.levelRaised.sendMessage(getPlayer(), toLevel);
 		}
 	}
 
@@ -231,7 +211,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 		}
 		this._perkLevel = toLevel;
 		if (toLevel < currentLevel) {
-			levelLoweredMessage.sendMessage(getPlayer(), toLevel);
+			Config.M.levelLowered.sendMessage(getPlayer(), toLevel);
 		}
 	}
 
@@ -248,11 +228,11 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	}
 
 	private void addGroup(int level) {
-		addGroupCommand.execute(this.getName(), level);
+		Config.C.addGroup.execute(this.getName(), level);
 	}
 
 	private void removeGroup(int level) {
-		removeGroupCommand.execute(this.getName(), level);
+		Config.C.removeGroup.execute(this.getName(), level);
 	}
 
 	public String toString()
