@@ -6,8 +6,11 @@ import java.time.LocalTime;
 
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.time.AlarmTrigger;
+import net.eithon.library.time.IRepeatable;
 import net.eithon.plugin.donationboard.logic.BoardController;
 import net.eithon.plugin.donationboard.logic.PlayerInfo;
+import net.eithon.plugin.stats.Config;
+import net.eithon.plugin.stats.Plugin;
 
 public final class Plugin extends EithonPlugin {
 	private BoardController _controller;
@@ -20,7 +23,7 @@ public final class Plugin extends EithonPlugin {
 		CommandHandler commandHandler = new CommandHandler(this, this._controller);
 		EventListener eventListener = new EventListener(this, this._controller);
 		AlarmTrigger.get().enable(this);
-		setShiftTimer();	
+		repeatShift();	
 		PlayerInfo.initialize(this);
 		super.activate(commandHandler, eventListener);
 	}
@@ -32,25 +35,17 @@ public final class Plugin extends EithonPlugin {
 		this._controller = null;
 		AlarmTrigger.get().disable();
 	}
-	
-	private void setShiftTimer() {
-		LocalDateTime alarmTime = null;
-		LocalDateTime alarmToday = LocalDateTime.of(LocalDate.now(), LocalTime.of(7,0,0));
-		LocalDateTime alarmTomorrow = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(7,0,0));
-		if (LocalDateTime.now().isBefore(alarmToday)) alarmTime = alarmToday;
-		else alarmTime = alarmTomorrow;
-		AlarmTrigger.get().setAlarm("Donation board daily shift",
-				alarmTime, 
-				new Runnable() {
-			public void run() {
-				keepOnShifting();
+
+	private void repeatShift() {
+		final Plugin thisObject = this;
+		AlarmTrigger.get().repeatEveryDay("Donation board daily shift", LocalTime.of(7,0,0), 
+				new IRepeatable() {
+			@Override
+			public boolean repeat() {
+				if (thisObject._controller == null) return false;
+				thisObject._controller.shiftLeft();
+				return true;
 			}
 		});
-	}
-
-	protected void keepOnShifting() {
-		if (this._controller == null) return;
-		this._controller.shiftLeft();
-		setShiftTimer();
 	}
 }
