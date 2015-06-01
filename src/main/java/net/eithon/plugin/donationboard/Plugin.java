@@ -1,7 +1,5 @@
 package net.eithon.plugin.donationboard;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import net.eithon.library.extensions.EithonPlugin;

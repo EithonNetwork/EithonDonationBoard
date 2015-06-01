@@ -1,3 +1,12 @@
+#
+# Debug level
+#	0 = NONE (no debug messages)
+#	1 = MAJOR (only major messages)
+#	2 = MINOR (also minor messages)
+#	3 = VERBOSE (all messages)
+#
+EithonDebugLevel: 1
+
 Days: 31
 Levels: 5
 MandatoryWorld: W_DonationBoard
