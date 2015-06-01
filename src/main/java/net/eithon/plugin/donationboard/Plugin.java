@@ -9,8 +9,6 @@ import net.eithon.library.time.AlarmTrigger;
 import net.eithon.library.time.IRepeatable;
 import net.eithon.plugin.donationboard.logic.BoardController;
 import net.eithon.plugin.donationboard.logic.PlayerInfo;
-import net.eithon.plugin.stats.Config;
-import net.eithon.plugin.stats.Plugin;
 
 public final class Plugin extends EithonPlugin {
 	private BoardController _controller;
