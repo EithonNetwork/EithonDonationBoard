@@ -89,6 +89,7 @@ public class BoardController {
 	public void loadNow() {
 		File file = new File(this._eithonPlugin.getDataFolder(), "donations.json");
 		FileContent fileContent = FileContent.loadFromFile(file);
+		if (fileContent == null) return;
 		JSONObject payload = (JSONObject)fileContent.getPayload();
 		if (payload == null) {
 			this._eithonPlugin.getEithonLogger().warning("The donation board payload was empty.");
