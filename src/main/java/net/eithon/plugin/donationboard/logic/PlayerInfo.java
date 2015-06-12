@@ -80,13 +80,14 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	}
 
 	@Override
-	public void fromJson(Object json) {
+	public PlayerInfo fromJson(Object json) {
 		JSONObject jsonObject = (JSONObject) json;
 		this._id = Converter.toPlayerId((JSONObject) jsonObject.get("player"));
 		this._name = Converter.toPlayerName((JSONObject) jsonObject.get("player"));
 		this._remainingDonationTokens = (int) jsonObject.get("remainingDonationTokens");
 		this._totalTokensDonated = (long) jsonObject.get("totalTokensDonated");
 		this._totalMoneyDonated = (double) jsonObject.get("totalMoneyDonated");
+		return this;
 	}
 
 	@SuppressWarnings("unchecked")

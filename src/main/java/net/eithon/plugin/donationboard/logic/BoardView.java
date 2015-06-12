@@ -10,7 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.json.simple.JSONObject;
 
-class BoardView implements IJson<PlayerInfo> {
+class BoardView implements IJson<BoardView> {
 	private Block _startBlock;
 	int _stepX;
 	int _stepZ;
@@ -19,6 +19,10 @@ class BoardView implements IJson<PlayerInfo> {
 		this._startBlock = startBlock;
 		this._stepX = 0;
 		this._stepZ = 1;	
+	}
+
+	public BoardView() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public World getWorld()
@@ -148,15 +152,16 @@ class BoardView implements IJson<PlayerInfo> {
 	}
 
 	@Override
-	public PlayerInfo factory() {
-		return new PlayerInfo();
+	public BoardView factory() {
+		return new BoardView();
 	}
 
 	@Override
-	public void fromJson(Object json) {
+	public BoardView fromJson(Object json) {
 		JSONObject jsonObject = (JSONObject) json;
 		this._startBlock = Converter.toBlock(jsonObject, null);
 		this._stepX = (int) jsonObject.get("stepX");
 		this._stepZ = (int) jsonObject.get("stepZ");
+		return this;
 	}
 }
