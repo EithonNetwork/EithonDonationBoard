@@ -3,24 +3,19 @@ package net.eithon.plugin.donationboard.logic;
 import java.util.UUID;
 
 import net.eithon.library.core.IUuidAndName;
+import net.eithon.library.extensions.EithonPlayer;
 import net.eithon.library.extensions.EithonPlugin;
-import net.eithon.library.json.Converter;
 import net.eithon.library.json.IJson;
-import net.eithon.library.plugin.ConfigurableCommand;
-import net.eithon.library.plugin.ConfigurableMessage;
 import net.eithon.library.plugin.Configuration;
 import net.eithon.plugin.donationboard.Config;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	private static EithonPlugin currentEithonPlugin;
 
-	private String _name;
-	private UUID _id;
-	private Player _player;
+	private EithonPlayer _eithonPlayer;
 	private int _numberOfLevels;
 	private int _remainingDonationTokens;
 	private double _totalMoneyDonated;
@@ -32,14 +27,11 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	public static void initialize(EithonPlugin eithonPlugin)
 	{
 		currentEithonPlugin = eithonPlugin;
-		Configuration config = currentEithonPlugin.getConfiguration();
 	}
 
 	public PlayerInfo(Player player)
 	{
-		this._player = player;
-		this._name = player.getName();
-		this._id = player.getUniqueId();
+		this._eithonPlayer = new EithonPlayer(player);
 		this._remainingDonationTokens = 0;
 		this._perkLevel = 0;
 		this._hasBeenToBoard = false;
@@ -49,9 +41,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 
 	public PlayerInfo(UUID uniqueId, int remainingDonationTokens, long totalTokensDonated, double totalAmountDonated)
 	{
-		this._player = null;
-		this._name = null;
-		this._id = uniqueId;
+		this._eithonPlayer = new EithonPlayer(uniqueId, null);
 		this._remainingDonationTokens = remainingDonationTokens;
 		this._totalTokensDonated = totalTokensDonated;
 		this._totalMoneyDonated = totalAmountDonated;
@@ -61,9 +51,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 
 	public PlayerInfo(UUID uniqueId, String name, int remainingDonationTokens, long totalTokensDonated, double totalAmountDonated)
 	{
-		this._player = null;
-		this._name = name;
-		this._id = uniqueId;
+		this._eithonPlayer = new EithonPlayer(uniqueId, name);
 		this._remainingDonationTokens = remainingDonationTokens;
 		this._totalTokensDonated = totalTokensDonated;
 		this._totalMoneyDonated = totalAmountDonated;
@@ -82,8 +70,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	@Override
 	public PlayerInfo fromJson(Object json) {
 		JSONObject jsonObject = (JSONObject) json;
-		this._id = Converter.toPlayerId((JSONObject) jsonObject.get("player"));
-		this._name = Converter.toPlayerName((JSONObject) jsonObject.get("player"));
+		this._eithonPlayer = EithonPlayer.getFromJSon(jsonObject.get("player"));
 		this._remainingDonationTokens = (int) jsonObject.get("remainingDonationTokens");
 		this._totalTokensDonated = (long) jsonObject.get("totalTokensDonated");
 		this._totalMoneyDonated = (double) jsonObject.get("totalMoneyDonated");
@@ -93,7 +80,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	@SuppressWarnings("unchecked")
 	public JSONObject toJson() {
 		JSONObject json = new JSONObject();
-		json.put("player", Converter.fromPlayer(this._id, this._name));
+		json.put("player", this._eithonPlayer.toJson());
 		json.put("remainingDonationTokens", this._remainingDonationTokens);
 		json.put("totalTokensDonated", this._totalTokensDonated);
 		json.put("totalMoneyDonated", this._totalMoneyDonated);
@@ -142,25 +129,15 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	}
 
 	public String getName() {
-		if (this._name == null)
-		{
-			Player player = this.getPlayer();
-			if (player == null) return null;
-			this._name = player.getName();
-		}
-		return this._name;
+		return this._eithonPlayer.getName();
 	}
 
 	public Player getPlayer() {
-		if (this._player == null)
-		{
-			this._player = Bukkit.getPlayer(getUniqueId());
-		}
-		return this._player;
+		return this._eithonPlayer.getPlayer();
 	}
 
 	public UUID getUniqueId() {
-		return this._id;
+		return this._eithonPlayer.getUniqueId();
 	}
 
 	public void demoteOrPromote(int toLevel, boolean reset) {

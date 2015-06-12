@@ -9,7 +9,7 @@ import net.eithon.plugin.donationboard.logic.BoardController;
 import net.eithon.plugin.donationboard.logic.PlayerInfo;
 
 public final class Plugin extends EithonPlugin {
-	private BoardController _controller;
+	BoardController _controller;
 
 	@Override
 	public void onEnable() {

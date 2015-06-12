@@ -1,6 +1,6 @@
 package net.eithon.plugin.donationboard.logic;
 
-import net.eithon.library.json.Converter;
+import net.eithon.library.extensions.EithonBlock;
 import net.eithon.library.json.IJson;
 
 import org.bukkit.Location;
@@ -11,23 +11,22 @@ import org.bukkit.block.Skull;
 import org.json.simple.JSONObject;
 
 class BoardView implements IJson<BoardView> {
-	private Block _startBlock;
+	private EithonBlock _startBlock;
 	int _stepX;
 	int _stepZ;
 
 	BoardView(Block startBlock) {
-		this._startBlock = startBlock;
+		this._startBlock = new EithonBlock(startBlock);
 		this._stepX = 0;
 		this._stepZ = 1;	
 	}
 
-	public BoardView() {
-		// TODO Auto-generated constructor stub
+	BoardView() {
 	}
 
 	public World getWorld()
 	{
-		return this._startBlock.getWorld();
+		return this._startBlock.getBlock().getWorld();
 	}
 
 	public int getStepX()
@@ -94,15 +93,17 @@ class BoardView implements IJson<BoardView> {
 
 	int calculateDay(Block block) {
 		if (this._startBlock == null) return 1;
+		Block startBlock = this._startBlock.getBlock();
 		if (this._stepX != 0) {
-			return Math.abs(block.getX() - this._startBlock.getX() + 1);
+			return Math.abs(block.getX() - startBlock.getX() + 1);
 		} else {
-			return Math.abs(block.getZ() - this._startBlock.getZ() + 1);
+			return Math.abs(block.getZ() - startBlock.getZ() + 1);
 		}
 	}
 
 	int calculateLevel(Block block) {
-		return (block.getY() - this._startBlock.getY() + 1);
+		Block startBlock = this._startBlock.getBlock();
+		return (block.getY() - startBlock.getY() + 1);
 	}
 
 	Block getBlock(int day, int level) {
@@ -111,10 +112,11 @@ class BoardView implements IJson<BoardView> {
 
 	private Block getBlockInternal(int dayIndex, int levelIndex) {
 		if (this._startBlock == null) return null;
-		Block block = this._startBlock.getWorld().getBlockAt(
-				this._startBlock.getX()+this._stepX*dayIndex, 
-				this._startBlock.getY()+levelIndex, 
-				this._startBlock.getZ()+this._stepZ*dayIndex);
+		Block startBlock = this._startBlock.getBlock();
+		Block block = startBlock.getWorld().getBlockAt(
+				startBlock.getX()+this._stepX*dayIndex, 
+				startBlock.getY()+levelIndex, 
+				startBlock.getZ()+this._stepZ*dayIndex);
 		return block;
 	}
 
@@ -139,13 +141,13 @@ class BoardView implements IJson<BoardView> {
 
 	public Location getLocation() {
 		if (this._startBlock == null) return null;
-		return this._startBlock.getLocation();
+		return this._startBlock.getBlock().getLocation();
 	}
 
 	@SuppressWarnings("unchecked")
 	public JSONObject toJson() {
 		JSONObject json = new JSONObject();
-		json.put("startBlock", Converter.fromBlock(getBlock(1, 1), true));
+		json.put("startBlock", this._startBlock.toJson());
 		json.put("stepX", this._stepX);
 		json.put("stepZ", this._stepZ);
 		return json;
@@ -159,7 +161,7 @@ class BoardView implements IJson<BoardView> {
 	@Override
 	public BoardView fromJson(Object json) {
 		JSONObject jsonObject = (JSONObject) json;
-		this._startBlock = Converter.toBlock(jsonObject, null);
+		this._startBlock = EithonBlock.getFromJson(jsonObject.get("startBlock"));
 		this._stepX = (int) jsonObject.get("stepX");
 		this._stepZ = (int) jsonObject.get("stepZ");
 		return this;
