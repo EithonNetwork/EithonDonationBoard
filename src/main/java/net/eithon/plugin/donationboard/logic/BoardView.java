@@ -166,4 +166,8 @@ class BoardView implements IJson<BoardView> {
 		this._stepZ = (int) jsonObject.get("stepZ");
 		return this;
 	}
+
+	public static BoardView createFromJson(JSONObject jsonObject) {
+		return new BoardView().fromJson(jsonObject);
+	}
 }

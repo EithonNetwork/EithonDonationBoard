@@ -95,7 +95,7 @@ public class BoardController {
 			this._eithonPlugin.getEithonLogger().warning("The donation board payload was empty.");
 			return;
 		}
-		this._view.fromJson((JSONObject)payload.get("view"));
+		this._view = BoardView.createFromJson((JSONObject)payload.get("view"));
 		this._knownPlayers.fromJson(payload.get("players"));
 	}
 	
