@@ -39,26 +39,6 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 		this._numberOfLevels = config.getInt("Levels", 5);
 	}
 
-	public PlayerInfo(UUID uniqueId, int remainingDonationTokens, long totalTokensDonated, double totalAmountDonated)
-	{
-		this._eithonPlayer = new EithonPlayer(uniqueId, null);
-		this._remainingDonationTokens = remainingDonationTokens;
-		this._totalTokensDonated = totalTokensDonated;
-		this._totalMoneyDonated = totalAmountDonated;
-		this._perkLevel = 0;
-		this._hasBeenToBoard = false;
-	}
-
-	public PlayerInfo(UUID uniqueId, String name, int remainingDonationTokens, long totalTokensDonated, double totalAmountDonated)
-	{
-		this._eithonPlayer = new EithonPlayer(uniqueId, name);
-		this._remainingDonationTokens = remainingDonationTokens;
-		this._totalTokensDonated = totalTokensDonated;
-		this._totalMoneyDonated = totalAmountDonated;
-		this._perkLevel = 0;
-		this._hasBeenToBoard = false;
-	}
-
 	PlayerInfo() {
 	}
 
