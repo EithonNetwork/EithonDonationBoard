@@ -4,11 +4,8 @@ import java.io.File;
 import java.time.LocalDateTime;
 
 import net.eithon.library.extensions.EithonPlugin;
-import net.eithon.library.json.Converter;
+import net.eithon.library.json.FileContent;
 import net.eithon.library.json.PlayerCollection;
-import net.eithon.library.plugin.Logger.DebugPrintLevel;
-import net.eithon.library.plugin.ConfigurableMessage;
-import net.eithon.library.plugin.Configuration;
 import net.eithon.library.time.AlarmTrigger;
 import net.eithon.plugin.donationboard.Config;
 
@@ -84,34 +81,21 @@ public class BoardController {
 		JSONObject payload = new JSONObject();
 		payload.put("view", this._view.toJson());
 		payload.put("players", this._knownPlayers.toJson());
-
-		JSONObject json = Converter.fromBody("donationBoard", 1, payload);
-
-		Converter.save(jsonFile, json);
-	}
-
-	private void delayedLoad() {
-		BukkitScheduler scheduler = this._eithonPlugin.getServer().getScheduler();
-		scheduler.scheduleSyncDelayedTask(this._eithonPlugin, new Runnable() {
-			public void run() {
-				loadNow();
-			}
-		}, 200L);
+		
+		FileContent fileContent = new FileContent("donationBoard", 1, payload);
+		fileContent.save(jsonFile);
 	}
 
 	public void loadNow() {
 		File file = new File(this._eithonPlugin.getDataFolder(), "donations.json");
-		JSONObject data = Converter.load(this._eithonPlugin, file);
-		if (data == null) {
-			this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.MAJOR, "The file was empty.");
-			return;			
-		}
-		JSONObject payload = (JSONObject)Converter.toBodyPayload(data);
+		FileContent fileContent = FileContent.loadFromFile(file);
+		if (fileContent == null) return;
+		JSONObject payload = (JSONObject)fileContent.getPayload();
 		if (payload == null) {
 			this._eithonPlugin.getEithonLogger().warning("The donation board payload was empty.");
 			return;
 		}
-		this._view.fromJson((JSONObject)payload.get("view"));
+		this._view = BoardView.createFromJson((JSONObject)payload.get("view"));
 		this._knownPlayers.fromJson(payload.get("players"));
 	}
 	

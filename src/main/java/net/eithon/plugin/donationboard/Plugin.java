@@ -1,7 +1,5 @@
 package net.eithon.plugin.donationboard;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import net.eithon.library.extensions.EithonPlugin;
@@ -11,7 +9,7 @@ import net.eithon.plugin.donationboard.logic.BoardController;
 import net.eithon.plugin.donationboard.logic.PlayerInfo;
 
 public final class Plugin extends EithonPlugin {
-	private BoardController _controller;
+	BoardController _controller;
 
 	@Override
 	public void onEnable() {
