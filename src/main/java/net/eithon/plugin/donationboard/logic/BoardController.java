@@ -28,14 +28,12 @@ public class BoardController {
 
 	public BoardController(EithonPlugin eithonPlugin) {
 		this._eithonPlugin = eithonPlugin;
-		this._model = new BoardModel(Config.V.numberOfDays, Config.V.numberOfLevels);
 		this._knownPlayers = new PlayerCollection<PlayerInfo>(new PlayerInfo());	
 		loadNow();
 	}
 
 	void disable() {
 		updatePerkLevel(0);
-		this._model = null;
 		this._view = null;
 		this._knownPlayers = new PlayerCollection<PlayerInfo>(new PlayerInfo());
 		this._eithonPlugin = null;
@@ -96,6 +94,8 @@ public class BoardController {
 			return;
 		}
 		this._view = BoardView.createFromJson((JSONObject)payload.get("view"));
+		this._model = new BoardModel(Config.V.numberOfDays, Config.V.numberOfLevels);
+		this._view.updateBoardModel(this._model);
 		this._knownPlayers.fromJson(payload.get("players"));
 	}
 	

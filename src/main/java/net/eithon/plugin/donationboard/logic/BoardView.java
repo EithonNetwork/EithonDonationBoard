@@ -61,7 +61,7 @@ class BoardView implements IJson<BoardView> {
 		}
 	}
 
-	public void updateBoardModel(BoardModel board) {
+	void updateBoardModel(BoardModel board) {
 		for (int day = 1; day <= board.getNumberOfDays(); day++) {
 			for (int level = 1; level <= board.getNumberOfLevels(); level++) {
 				Block block = getBlock(day, level);
