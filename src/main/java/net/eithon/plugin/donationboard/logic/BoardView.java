@@ -162,8 +162,8 @@ class BoardView implements IJson<BoardView> {
 	public BoardView fromJson(Object json) {
 		JSONObject jsonObject = (JSONObject) json;
 		this._startBlock = EithonBlock.getFromJson(jsonObject.get("startBlock"));
-		this._stepX = (int) jsonObject.get("stepX");
-		this._stepZ = (int) jsonObject.get("stepZ");
+		this._stepX = ((Long) jsonObject.get("stepX")).intValue();
+		this._stepZ = ((Long) jsonObject.get("stepZ")).intValue();
 		return this;
 	}
 
