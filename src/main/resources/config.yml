@@ -28,7 +28,7 @@ messages:
 
   #
   # No parameters
-  HowToGetTokens: You get E-tokens by donating money at http://eithon.org/donate.
+  HowToGetTokens: You get E-tokens by donating money at http://eithon.net/donate.
 
   #
   # Parameters: <player name> (%s)
