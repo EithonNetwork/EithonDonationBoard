@@ -173,9 +173,8 @@ public class BoardController {
 		if (!isInMandatoryWorld(player.getWorld())) return;
 		PlayerInfo playerInfo = this._knownPlayers.get(player);
 		if (playerInfo.shouldGetPerks()) return;
-		LocalDateTime alarm = LocalDateTime.now().plusSeconds(Config.V.perkClaimAfterSeconds);
 		AlarmTrigger.get().setAlarm(String.format("%s can claim perk", player.getName()),
-				alarm,
+				Config.V.perkClaimAfterSeconds,
 				new Runnable() {
 			public void run() {
 				if (isInMandatoryWorld(player.getWorld())) {
