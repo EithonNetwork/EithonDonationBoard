@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.json.FileContent;
 import net.eithon.library.json.PlayerCollection;
+import net.eithon.library.plugin.Logger.DebugPrintLevel;
 import net.eithon.library.time.AlarmTrigger;
 import net.eithon.plugin.donationboard.Config;
 
@@ -170,18 +171,33 @@ public class BoardController {
 
 	public void playerTeleportedToBoard(Player player, Location from) 
 	{
-		if (!isInMandatoryWorld(player.getWorld())) return;
+		debug("playerTeleportedToBoard", "Enter player %s", player.getName());
+		if (!isInMandatoryWorld(player.getWorld())) {	
+			debug("playerTeleportedToBoard", "World %s is not accepted", player.getWorld().getName());
+			debug("playerTeleportedToBoard", "Leave");
+			return;
+		}
 		PlayerInfo playerInfo = this._knownPlayers.get(player);
-		if (playerInfo.shouldGetPerks()) return;
+		if (playerInfo.shouldGetPerks()) {	
+			debug("playerTeleportedToBoard", "Player %s should not get perks", player.getName());
+			debug("playerTeleportedToBoard", "Leave");
+			return;
+		}
+		debug("playerTeleportedToBoard", "Set alarm");
 		AlarmTrigger.get().setAlarm(String.format("%s can claim perk", player.getName()),
 				Config.V.perkClaimAfterSeconds,
 				new Runnable() {
 			public void run() {
+				debug("playerTeleportedToBoard.ALARM", "Checking if still in correct world");
 				if (isInMandatoryWorld(player.getWorld())) {
+					debug("playerTeleportedToBoard.ALARM", "In correct world");
 					register(player);
+				} else {
+					debug("playerTeleportedToBoard.ALARM", "Not in correct world");					
 				}
 			}
 		});	
+		debug("playerTeleportedToBoard", "Leave");
 	}
 
 	void refreshNow() {
@@ -281,9 +297,16 @@ public class BoardController {
 				playerInfo.getTotalMoneyDonated()));	
 	}
 
-	static boolean isInMandatoryWorld(World world) 
+	boolean isInMandatoryWorld(World world) 
 	{
-		if (mandatoryWorld == null) return true;
+		if (mandatoryWorld == null) {
+			this._eithonPlugin.getEithonLogger().warning("No mandatory world set");
+			return true;
+		}
 		return world.getName().equalsIgnoreCase(mandatoryWorld);
+	}
+	
+	void debug(String method, String format, Object... args) {
+		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE, format, args);
 	}
 }
