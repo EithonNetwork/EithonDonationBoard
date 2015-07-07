@@ -179,7 +179,8 @@ public class BoardController {
 		}
 		PlayerInfo playerInfo = this._knownPlayers.get(player);
 		if (playerInfo.shouldGetPerks()) {	
-			debug("playerTeleportedToBoard", "Player %s should not get perks", player.getName());
+			debug("playerTeleportedToBoard", "Player %s will get a perk update without waiting.", player.getName());
+			register(player);
 			debug("playerTeleportedToBoard", "Leave");
 			return;
 		}
