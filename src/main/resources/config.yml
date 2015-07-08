@@ -1,7 +1,7 @@
 Days: 31
-Levels: 5
 MandatoryWorld: W_DonationBoard
 PerkClaimAfterSeconds: 20
+PerkLevelGroups: [PerkLevel1, PerkLevel2, PerkLevel3, PerkLevel4, PerkLevel5]
 
 eithon:
   UseMarkUpForMessages: 0
@@ -15,15 +15,6 @@ eithon:
   #  3 = VERBOSE (all messages)
   #
   DebugLevel: 1
-
-commands:
-  #
-  # Parameters: <player>(%s) <perk level>(%d)
-  AddGroupCommand: perm player %s addgroup PerkLevel%d
-
-  #
-  # Parameters: <player>(%s) <perk level>(%d)
-  RemoveGroupCommand: perm player %s removegroup PerkLevel%d
 
 messages:
   #

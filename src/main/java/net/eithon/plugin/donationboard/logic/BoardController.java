@@ -5,6 +5,7 @@ import java.io.File;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.json.FileContent;
 import net.eithon.library.json.PlayerCollection;
+import net.eithon.library.permissions.PermissionGroupLadder;
 import net.eithon.library.plugin.Logger.DebugPrintLevel;
 import net.eithon.library.time.AlarmTrigger;
 import net.eithon.plugin.donationboard.Config;
@@ -25,10 +26,14 @@ public class BoardController {
 	private BoardModel _model;
 	private BoardView _view;
 	private EithonPlugin _eithonPlugin = null;
+	private PermissionGroupLadder _perkLevelLadder;
 
 	public BoardController(EithonPlugin eithonPlugin) {
 		this._eithonPlugin = eithonPlugin;
-		this._knownPlayers = new PlayerCollection<PlayerInfo>(new PlayerInfo());	
+		this._knownPlayers = new PlayerCollection<PlayerInfo>(new PlayerInfo());
+		this._perkLevelLadder = new PermissionGroupLadder(
+				eithonPlugin,
+				true, Config.V.perkLevelGroups);
 		loadNow();
 	}
 
@@ -58,7 +63,7 @@ public class BoardController {
 	}
 
 	public void initialize(Player player, Block clickedBlock) {
-		this._model = new BoardModel(Config.V.numberOfDays, Config.V.numberOfLevels);
+		this._model = new BoardModel(Config.V.numberOfDays, Config.V.perkLevelGroups.length);
 		this._view = new BoardView(clickedBlock);
 		this._model.createFirstLineOfButtons();
 		delayedSave();
@@ -94,7 +99,7 @@ public class BoardController {
 			return;
 		}
 		this._view = BoardView.createFromJson((JSONObject)payload.get("view"));
-		this._model = new BoardModel(Config.V.numberOfDays, Config.V.numberOfLevels);
+		this._model = new BoardModel(Config.V.numberOfDays, Config.V.perkLevelGroups.length);
 		this._view.updateBoardModel(this._model);
 		this._knownPlayers.fromJson(payload.get("players"));
 	}
@@ -104,7 +109,7 @@ public class BoardController {
 			playerInfo.setIsDonatorOnTheBoard(false);
 		}
 		for (int day = 0; day <= Config.V.numberOfDays; day++) {
-			for (int level = 0; level <= Config.V.numberOfLevels; level++) {
+			for (int level = 0; level <= Config.V.perkLevelGroups.length; level++) {
 				Donation donation = this._model.getDonationInfo(day, level);
 				if (donation == null) continue;
 				Player player = donation.getPlayer();
@@ -117,7 +122,7 @@ public class BoardController {
 
 	private boolean isDonator(Player player) {
 		for (int day = 0; day <= Config.V.numberOfDays; day++) {
-			for (int level = 0; level <= Config.V.numberOfLevels; level++) {
+			for (int level = 0; level <= Config.V.perkLevelGroups.length; level++) {
 				Donation donation = this._model.getDonationInfo(day, level);
 				if (donation == null) continue;
 				if (donation.getPlayer() == player) return true;
@@ -136,13 +141,13 @@ public class BoardController {
 	public void register(Player player) {
 		PlayerInfo playerInfo = getOrAddPlayerInfo(player);
 		playerInfo.markAsHasBeenToBoard();
-		maybePromotePlayer(player, true);
+		maybePromotePlayer(playerInfo);
 	}
 
 	public void donate(Player player, int tokens, double amount) {
 		PlayerInfo playerInfo = getOrAddPlayerInfo(player);
 		playerInfo.addDonationTokens(tokens, amount);
-		maybePromotePlayer(player, false);
+		maybePromotePlayer(playerInfo);
 		delayedSave();
 	}
 
@@ -154,10 +159,12 @@ public class BoardController {
 		}	
 	}
 
-	private void maybePromotePlayer(Player player, boolean forceReset) {
-		PlayerInfo playerInfo = getOrAddPlayerInfo(player);
+	private void maybePromotePlayer(PlayerInfo playerInfo) {
 		int toLevel = this._model.getDonationLevel(1);
-		playerInfo.demoteOrPromote(toLevel, forceReset);
+		Player player = playerInfo.getPlayer();
+		if (player == null) return;
+		this._perkLevelLadder.updatePermissionGroups(player, toLevel);
+		playerInfo.setPerkLevel(toLevel);
 	}
 
 	public void playerJoined(Player player) {
@@ -165,7 +172,7 @@ public class BoardController {
 		if (isDonator(player)) {
 			playerInfo.setIsDonatorOnTheBoard(true);
 		}
-		maybePromotePlayer(player, true);
+		maybePromotePlayer(playerInfo);
 	}
 
 	public void playerTeleportedToBoard(Player player, Location from) 
@@ -255,7 +262,10 @@ public class BoardController {
 	private void updatePerkLevel(int toLevel) 
 	{
 		for (PlayerInfo playerInfo : this._knownPlayers) {
-			playerInfo.demoteOrPromote(toLevel, false);
+			Player player = playerInfo.getPlayer();
+			if (player == null) continue;
+			this._perkLevelLadder.updatePermissionGroups(player, toLevel);
+			playerInfo.setPerkLevel(toLevel);
 		}	
 	}
 
