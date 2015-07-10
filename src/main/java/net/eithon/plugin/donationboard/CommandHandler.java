@@ -26,9 +26,9 @@ public class CommandHandler implements ICommandHandler {
 	}
 
 	public boolean onCommand(CommandParser commandParser) {
-		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1)) return true;
-
 		String command = commandParser.getArgumentCommand();
+		if (command == null) return false;
+		
 		if (command.equals("donate")) {
 			donateCommand(commandParser);
 		} else {
@@ -49,7 +49,6 @@ public class CommandHandler implements ICommandHandler {
 			} else if (command.equals("stats")) {
 				statsCommand(commandParser);
 			} else {
-				commandParser.showCommandSyntax();
 				return false;
 			}
 		}

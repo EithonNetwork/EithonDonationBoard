@@ -1,7 +1,8 @@
 package net.eithon.plugin.donationboard;
 
+import java.util.List;
+
 import net.eithon.library.extensions.EithonPlugin;
-import net.eithon.library.plugin.ConfigurableCommand;
 import net.eithon.library.plugin.ConfigurableMessage;
 import net.eithon.library.plugin.Configuration;
 
@@ -17,28 +18,23 @@ public class Config {
 	public static class V {	
 		public static String mandatoryWorld;
 		public static int numberOfDays;
-		public static int numberOfLevels;
 		public static long perkClaimAfterSeconds;
+		public static String[] perkLevelGroups;
 
 		static void load(Configuration config) {
 			mandatoryWorld = config.getString("MandatoryWorld", "");
 			numberOfDays = config.getInt("Days", 31);
-			numberOfLevels = config.getInt("Levels", 5);
 			perkClaimAfterSeconds = config.getInt("PerkClaimAfterSeconds", 10);
+			List<String> stringList = config.getStringList("PerkLevelGroups");
+			if (stringList == null) perkLevelGroups = new String[0];
+			else perkLevelGroups = stringList.toArray(new String[0]);
 		}
 	}
 	public static class C {
-		public static ConfigurableCommand addGroup;
-		public static ConfigurableCommand removeGroup;
-
 		static void load(Configuration config) {
-			addGroup = config.getConfigurableCommand("commands.AddGroup", 2,
-					"perm player %s addgroup PerkLevel%d");
-			removeGroup = config.getConfigurableCommand("commands.RemoveGroup", 2,
-					"perm player %s removegroup PerkLevel%d");
 		}
-
 	}
+	
 	public static class M {
 		public static ConfigurableMessage needTokens;
 		public static ConfigurableMessage howToGetTokens;
