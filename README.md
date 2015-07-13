@@ -2,6 +2,11 @@
 
 ## Release history
 
+### 1.2.2 (2015-07-13)
+
+* BUG: Players could get perks without going to the donataion board.
+* BUG: Perk levels was off by one.
+
 ### 1.2 (2015-07-08)
 
 * CHANGE: Now uses EithonLibrary PermissionGroupLadder for permissions.

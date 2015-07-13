@@ -19,8 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.json.simple.JSONObject;
 public class BoardController {
-	private static String mandatoryWorld;
-
 	private PlayerCollection<PlayerInfo> _knownPlayers;
 
 	private BoardModel _model;
@@ -309,11 +307,11 @@ public class BoardController {
 
 	boolean isInMandatoryWorld(World world) 
 	{
-		if (mandatoryWorld == null) {
+		if (Config.V.mandatoryWorld == null) {
 			this._eithonPlugin.getEithonLogger().warning("No mandatory world set");
 			return true;
 		}
-		return world.getName().equalsIgnoreCase(mandatoryWorld);
+		return world.getName().equalsIgnoreCase(Config.V.mandatoryWorld);
 	}
 	
 	void debug(String method, String format, Object... args) {
