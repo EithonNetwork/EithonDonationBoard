@@ -160,11 +160,11 @@ public class BoardController {
 	}
 
 	private void maybePromotePlayer(PlayerInfo playerInfo) {
-		int toLevel = this._model.getDonationLevel(1);
+		int levelStartAtOne = this._model.getDonationLevel(1);
 		Player player = playerInfo.getPlayer();
 		if (player == null) return;
-		this._perkLevelLadder.updatePermissionGroups(player, toLevel);
-		playerInfo.setPerkLevel(toLevel);
+		this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
+		playerInfo.setPerkLevel(levelStartAtOne);
 	}
 
 	public void playerJoined(Player player) {
@@ -259,13 +259,13 @@ public class BoardController {
 		});
 	}
 
-	private void updatePerkLevel(int toLevel) 
+	private void updatePerkLevel(int levelStartAtOne) 
 	{
 		for (PlayerInfo playerInfo : this._knownPlayers) {
 			Player player = playerInfo.getPlayer();
 			if (player == null) continue;
-			this._perkLevelLadder.updatePermissionGroups(player, toLevel);
-			playerInfo.setPerkLevel(toLevel);
+			this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
+			playerInfo.setPerkLevel(levelStartAtOne);
 		}	
 	}
 
