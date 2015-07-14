@@ -2,10 +2,11 @@
 
 ## Release history
 
-### 1.2.2 (2015-07-13)
+### 1.2.2 (2015-07-14)
 
-* BUG: Players could get perks without going to the donataion board.
+* BUG: Players could get perks without going to the donation board.
 * BUG: Perk levels was off by one.
+* BUG: Exceptions logging in if no donation board exists.
 
 ### 1.2 (2015-07-08)
 

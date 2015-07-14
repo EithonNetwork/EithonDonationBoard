@@ -119,6 +119,7 @@ public class BoardController {
 	}	
 
 	private boolean isDonator(Player player) {
+		if (this._model == null) return false;
 		for (int day = 0; day <= Config.V.numberOfDays; day++) {
 			for (int level = 0; level <= Config.V.perkLevelGroups.length; level++) {
 				Donation donation = this._model.getDonationInfo(day, level);
@@ -158,6 +159,7 @@ public class BoardController {
 	}
 
 	private void maybePromotePlayer(PlayerInfo playerInfo) {
+		if (this._model == null) return;
 		int levelStartAtOne = this._model.getDonationLevel(1);
 		Player player = playerInfo.getPlayer();
 		if (player == null) return;
