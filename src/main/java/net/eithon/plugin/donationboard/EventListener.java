@@ -1,6 +1,7 @@
 package net.eithon.plugin.donationboard;
 
 import net.eithon.library.extensions.EithonPlugin;
+import net.eithon.library.plugin.Logger.DebugPrintLevel;
 import net.eithon.plugin.donationboard.logic.BoardController;
 
 import org.bukkit.World;
@@ -16,8 +17,10 @@ public final class EventListener implements Listener {
 
 
 	private BoardController _controller;
+	private EithonPlugin _eithonPlugin;
 
 	public EventListener(EithonPlugin eithonPlugin, BoardController boardController) {	
+		this._eithonPlugin = eithonPlugin;
 		this._controller = boardController;
 	}
 
@@ -54,6 +57,11 @@ public final class EventListener implements Listener {
 	private boolean isInMandatoryWorld(World world) 
 	{
 		if (Config.V.mandatoryWorld == null) return true;
-		return world.getName().equalsIgnoreCase(Config.V.mandatoryWorld);
+		boolean sameName = world.getName().equalsIgnoreCase(Config.V.mandatoryWorld);
+		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE,
+				"Current world: \"%s\". Mandatory world: \"%s\". Same = %s", 
+				world.getName(), Config.V.mandatoryWorld, 
+				sameName ? "TRUE" : "FALSE");
+		return sameName;
 	}
 }

@@ -50,8 +50,10 @@ public class BoardController {
 		}
 		decreasePlayerDonationTokens(player);
 		int day = markAsDonated(player, block);
-		if (day == 1) broadCastDonation(player);
-		playersNeedToRevisitBoard();
+		if (day == 1) {
+			broadCastDonation(player);
+			playersNeedToRevisitBoard();
+		}
 		delayedSave();
 		delayedRefresh();
 	}
@@ -102,7 +104,7 @@ public class BoardController {
 		this._knownPlayers.fromJson(payload.get("players"));
 	}
 	
-	private void FindDonators() {
+	private void findDonators() {
 		for (PlayerInfo playerInfo : this._knownPlayers) {
 			playerInfo.setIsDonatorOnTheBoard(false);
 		}
@@ -151,20 +153,16 @@ public class BoardController {
 	}
 
 	private void playersNeedToRevisitBoard() {
-		for (PlayerInfo playerInfo : this._knownPlayers) {
-			if (!playerInfo.shouldBeAutomaticallyPromoted())  {
-				playerInfo.resetHasBeenToBoard();
-			}
-		}	
-	}
-
-	private void maybePromotePlayer(PlayerInfo playerInfo) {
-		if (this._model == null) return;
 		int levelStartAtOne = this._model.getDonationLevel(1);
-		Player player = playerInfo.getPlayer();
-		if (player == null) return;
-		this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
-		playerInfo.setPerkLevel(levelStartAtOne);
+		for (PlayerInfo playerInfo : this._knownPlayers) {
+			if (!playerInfo.shouldBeAutomaticallyPromoted()) {
+				playerInfo.resetHasBeenToBoard();
+				Player player = playerInfo.getPlayer();
+				if (player == null) continue;
+				Config.M.visitBoard.sendMessage(player, levelStartAtOne);
+			}		
+			maybePromotePlayer(playerInfo);
+		}	
 	}
 
 	public void playerJoined(Player player) {
@@ -173,6 +171,18 @@ public class BoardController {
 			playerInfo.setIsDonatorOnTheBoard(true);
 		}
 		maybePromotePlayer(playerInfo);
+	}
+
+	private void maybePromotePlayer(PlayerInfo playerInfo) {
+		if (this._model == null) return;
+		if (!playerInfo.shouldGetPerks()) return;
+		
+		Player player = playerInfo.getPlayer();
+		if (player == null) return;
+		int levelStartAtOne = this._model.getDonationLevel(1);
+		this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
+		playerInfo.setPerkLevel(levelStartAtOne);
+		Config.M.levelChanged.sendMessage(player, levelStartAtOne);
 	}
 
 	public void playerTeleportedToBoard(Player player, Location from) 
@@ -210,7 +220,7 @@ public class BoardController {
 	void refreshNow() {
 		if (this._model == null) return;
 		this._view.refresh(this._model);
-		FindDonators();
+		findDonators();
 		updatePerkLevel();
 	}
 

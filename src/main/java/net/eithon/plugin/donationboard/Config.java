@@ -40,8 +40,7 @@ public class Config {
 		public static ConfigurableMessage howToGetTokens;
 		public static ConfigurableMessage playerHasDonated;
 		public static ConfigurableMessage visitBoard;
-		public static ConfigurableMessage levelRaised;
-		public static ConfigurableMessage levelLowered;
+		public static ConfigurableMessage levelChanged;
 		public static ConfigurableMessage noTokensLeft;
 		public static ConfigurableMessage tokensLeft;
 
@@ -54,13 +53,11 @@ public class Config {
 					"Player %s has made a donation for today!");
 			visitBoard = config.getConfigurableMessage("messages.VisitBoard", 1,
 					"If you visit the donationboard, you can raise your perk level to %d.");
-			levelRaised = config.getConfigurableMessage("messages.PerkLevelRaised", 1,
-					"Your perk level has been raised to %d.");
-			levelLowered = config.getConfigurableMessage("messages.PerkLevelLowered", 1,
-					"Your perk level has been lowered to %d.");
+			levelChanged = config.getConfigurableMessage("messages.PerkLevelChanged", 1,
+					"Your perk level has been changed to %d.");
 			noTokensLeft = config.getConfigurableMessage("messages.NoTokensLeft", 0,
 					"You have no E-tokens left.");
-			tokensLeft = config.getConfigurableMessage("TokensLeftMessage", 1,
+			tokensLeft = config.getConfigurableMessage("messages.TokensLeft", 1,
 					"You have %d remaining E-tokens.");
 		}		
 	}

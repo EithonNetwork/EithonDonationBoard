@@ -28,3 +28,19 @@ messages:
   #
   # Parameters: <player name> (%s)
   PlayerHasDonated: Player %s has made a donation for today!
+
+  #
+  # Parameters: -
+  NoTokensLeft: You have no E-tokens left.
+
+  #
+  # Parameters: <remaining tokens> (%d)
+  TokensLeft: You have %d remaining E-tokens.
+
+  #
+  # Parameters: <new perk level> (%d)
+  VisitBoard: If you visit the donation board, you can raise your perk level to %d.
+
+  #
+  # Parameters: <new perk level> (%d)
+  PerkLevelChanged: "!Your perk level\nhas been changed to %d"

@@ -2,6 +2,11 @@
 
 ## Release history
 
+### 1.3 (2015-07-14)
+
+* CHANGE: Added message to player when he/she needs to revisit the donation board.
+* CHANGE: Added message to player when he/she has received a new perk level.
+
 ### 1.2.2 (2015-07-14)
 
 * BUG: Players could get perks without going to the donation board.
