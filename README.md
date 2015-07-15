@@ -2,6 +2,17 @@
 
 ## Release history
 
+### 1.3 (2015-07-14)
+
+* CHANGE: Added message to player when he/she needs to revisit the donation board.
+* CHANGE: Added message to player when he/she has received a new perk level.
+
+### 1.2.2 (2015-07-14)
+
+* BUG: Players could get perks without going to the donation board.
+* BUG: Perk levels was off by one.
+* BUG: Exceptions logging in if no donation board exists.
+
 ### 1.2 (2015-07-08)
 
 * CHANGE: Now uses EithonLibrary PermissionGroupLadder for permissions.

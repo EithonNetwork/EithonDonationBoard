@@ -19,7 +19,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	private int _remainingDonationTokens;
 	private double _totalMoneyDonated;
 	private long _totalTokensDonated;
-	private int _perkLevel;
+	private int _perkLevelStartAtOne;
 	private boolean _isDonatorOnTheBoard;
 	private boolean _hasBeenToBoard;
 
@@ -32,7 +32,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	{
 		this._eithonPlayer = new EithonPlayer(player);
 		this._remainingDonationTokens = 0;
-		this._perkLevel = 0;
+		this._perkLevelStartAtOne = 0;
 		this._hasBeenToBoard = false;
 	}
 
@@ -93,7 +93,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 		sendMessage(String.format("You now have %d E-tokens to use on the donation board.", getRemainingDonationTokens()));
 	}
 	
-	public void setPerkLevel(int level) { this._perkLevel = level; }
+	public void setPerkLevel(int levelStartAtOne) { this._perkLevelStartAtOne = levelStartAtOne; }
 
 	public void usedOneToken() {
 		if (this._remainingDonationTokens < 0) {
@@ -145,7 +145,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 
 	public String toString()
 	{
-		return String.format("%s (%d tokens): perklevel %d", this.getName(), this._remainingDonationTokens, this._perkLevel);
+		return String.format("%s (%d tokens): perklevel %d", this.getName(), this._remainingDonationTokens, this._perkLevelStartAtOne);
 	}
 
 	private void verbose(String method, String format, Object... args) {

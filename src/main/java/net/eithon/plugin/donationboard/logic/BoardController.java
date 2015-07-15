@@ -19,8 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.json.simple.JSONObject;
 public class BoardController {
-	private static String mandatoryWorld;
-
 	private PlayerCollection<PlayerInfo> _knownPlayers;
 
 	private BoardModel _model;
@@ -52,8 +50,10 @@ public class BoardController {
 		}
 		decreasePlayerDonationTokens(player);
 		int day = markAsDonated(player, block);
-		if (day == 1) broadCastDonation(player);
-		playersNeedToRevisitBoard();
+		if (day == 1) {
+			broadCastDonation(player);
+			playersNeedToRevisitBoard();
+		}
 		delayedSave();
 		delayedRefresh();
 	}
@@ -104,7 +104,7 @@ public class BoardController {
 		this._knownPlayers.fromJson(payload.get("players"));
 	}
 	
-	private void FindDonators() {
+	private void findDonators() {
 		for (PlayerInfo playerInfo : this._knownPlayers) {
 			playerInfo.setIsDonatorOnTheBoard(false);
 		}
@@ -121,6 +121,7 @@ public class BoardController {
 	}	
 
 	private boolean isDonator(Player player) {
+		if (this._model == null) return false;
 		for (int day = 0; day <= Config.V.numberOfDays; day++) {
 			for (int level = 0; level <= Config.V.perkLevelGroups.length; level++) {
 				Donation donation = this._model.getDonationInfo(day, level);
@@ -152,19 +153,16 @@ public class BoardController {
 	}
 
 	private void playersNeedToRevisitBoard() {
+		int levelStartAtOne = this._model.getDonationLevel(1);
 		for (PlayerInfo playerInfo : this._knownPlayers) {
-			if (!playerInfo.shouldBeAutomaticallyPromoted())  {
+			if (!playerInfo.shouldBeAutomaticallyPromoted()) {
 				playerInfo.resetHasBeenToBoard();
-			}
+				Player player = playerInfo.getPlayer();
+				if (player == null) continue;
+				Config.M.visitBoard.sendMessage(player, levelStartAtOne);
+			}		
+			maybePromotePlayer(playerInfo);
 		}	
-	}
-
-	private void maybePromotePlayer(PlayerInfo playerInfo) {
-		int toLevel = this._model.getDonationLevel(1);
-		Player player = playerInfo.getPlayer();
-		if (player == null) return;
-		this._perkLevelLadder.updatePermissionGroups(player, toLevel);
-		playerInfo.setPerkLevel(toLevel);
 	}
 
 	public void playerJoined(Player player) {
@@ -173,6 +171,18 @@ public class BoardController {
 			playerInfo.setIsDonatorOnTheBoard(true);
 		}
 		maybePromotePlayer(playerInfo);
+	}
+
+	private void maybePromotePlayer(PlayerInfo playerInfo) {
+		if (this._model == null) return;
+		if (!playerInfo.shouldGetPerks()) return;
+		
+		Player player = playerInfo.getPlayer();
+		if (player == null) return;
+		int levelStartAtOne = this._model.getDonationLevel(1);
+		this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
+		playerInfo.setPerkLevel(levelStartAtOne);
+		Config.M.levelChanged.sendMessage(player, levelStartAtOne);
 	}
 
 	public void playerTeleportedToBoard(Player player, Location from) 
@@ -210,7 +220,7 @@ public class BoardController {
 	void refreshNow() {
 		if (this._model == null) return;
 		this._view.refresh(this._model);
-		FindDonators();
+		findDonators();
 		updatePerkLevel();
 	}
 
@@ -259,13 +269,13 @@ public class BoardController {
 		});
 	}
 
-	private void updatePerkLevel(int toLevel) 
+	private void updatePerkLevel(int levelStartAtOne) 
 	{
 		for (PlayerInfo playerInfo : this._knownPlayers) {
 			Player player = playerInfo.getPlayer();
 			if (player == null) continue;
-			this._perkLevelLadder.updatePermissionGroups(player, toLevel);
-			playerInfo.setPerkLevel(toLevel);
+			this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
+			playerInfo.setPerkLevel(levelStartAtOne);
 		}	
 	}
 
@@ -309,11 +319,11 @@ public class BoardController {
 
 	boolean isInMandatoryWorld(World world) 
 	{
-		if (mandatoryWorld == null) {
+		if (Config.V.mandatoryWorld == null) {
 			this._eithonPlugin.getEithonLogger().warning("No mandatory world set");
 			return true;
 		}
-		return world.getName().equalsIgnoreCase(mandatoryWorld);
+		return world.getName().equalsIgnoreCase(Config.V.mandatoryWorld);
 	}
 	
 	void debug(String method, String format, Object... args) {
