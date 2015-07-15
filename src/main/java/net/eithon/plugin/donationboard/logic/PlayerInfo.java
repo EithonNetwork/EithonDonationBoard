@@ -47,7 +47,7 @@ public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
 	@Override
 	public PlayerInfo fromJson(Object json) {
 		JSONObject jsonObject = (JSONObject) json;
-		this._eithonPlayer = EithonPlayer.getFromJSon(jsonObject.get("player"));
+		this._eithonPlayer = EithonPlayer.getFromJson(jsonObject.get("player"));
 		this._remainingDonationTokens = ((Long) jsonObject.get("remainingDonationTokens")).intValue();
 		this._totalTokensDonated = ((Long) jsonObject.get("totalTokensDonated")).intValue();
 		this._totalMoneyDonated = (double) jsonObject.get("totalMoneyDonated");
