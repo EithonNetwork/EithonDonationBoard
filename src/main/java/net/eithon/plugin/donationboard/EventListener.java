@@ -46,6 +46,6 @@ public final class EventListener implements Listener {
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		if (!this._controller.isInMandatoryWorld(event.getTo().getWorld())) return;
 		Player player = event.getPlayer();
-		this._controller.playerTeleportedToBoard(player, event.getFrom());
+		this._controller.delayedTeleportCheck(player);
 	}
 }

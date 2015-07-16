@@ -192,8 +192,17 @@ public class BoardController {
 		playerInfo.setPerkLevel(levelStartAtOne);
 		Config.M.levelChanged.sendMessage(player, levelStartAtOne);
 	}
+	
+	public void delayedTeleportCheck(Player player)  {
+		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+		scheduler.scheduleSyncDelayedTask(this._eithonPlugin, new Runnable() {
+			public void run() {
+				playerTeleportedToBoard(player);
+			}
+		}, 20);
+	}
 
-	public void playerTeleportedToBoard(Player player, Location from) 
+	void playerTeleportedToBoard(Player player) 
 	{
 		verbose("playerTeleportedToBoard", "Enter player %s", player.getName());
 		if (!isInMandatoryWorld(player.getWorld())) {	
