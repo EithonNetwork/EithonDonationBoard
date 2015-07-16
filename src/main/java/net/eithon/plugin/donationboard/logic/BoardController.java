@@ -86,7 +86,7 @@ public class BoardController {
 		JSONObject payload = new JSONObject();
 		payload.put("view", this._view.toJson());
 		payload.put("players", this._knownPlayers.toJson());
-		
+
 		FileContent fileContent = new FileContent("donationBoard", 1, payload);
 		fileContent.save(jsonFile);
 	}
@@ -105,7 +105,7 @@ public class BoardController {
 		this._view.updateBoardModel(this._model);
 		this._knownPlayers.fromJson(payload.get("players"));
 	}
-	
+
 	private void findDonators() {
 		for (PlayerInfo playerInfo : this._knownPlayers) {
 			playerInfo.setIsDonatorOnTheBoard(false);
@@ -157,13 +157,13 @@ public class BoardController {
 	private void playersNeedToRevisitBoard() {
 		int levelStartAtOne = this._model.getDonationLevel(1);
 		for (PlayerInfo playerInfo : this._knownPlayers) {
+			playerInfo.resetHasBeenToBoard();		
+			maybePromotePlayer(playerInfo);
 			if (!playerInfo.shouldBeAutomaticallyPromoted()) {
-				playerInfo.resetHasBeenToBoard();
 				Player player = playerInfo.getPlayer();
 				if (player == null) continue;
 				Config.M.visitBoard.sendMessage(player, levelStartAtOne);
-			}		
-			maybePromotePlayer(playerInfo);
+			}
 		}	
 	}
 
@@ -177,22 +177,35 @@ public class BoardController {
 
 	private void maybePromotePlayer(PlayerInfo playerInfo) {
 		if (this._model == null) return;
-		if (!playerInfo.shouldGetPerks()) return;
-		
+		int levelStartAtOne = playerInfo.shouldGetPerks() ? this._model.getDonationLevel(1) : 0;
+		updatePerkLevel(playerInfo, levelStartAtOne);
+	}
+
+	private void updatePerkLevel(PlayerInfo playerInfo, int levelStartAtOne) 
+	{
 		Player player = playerInfo.getPlayer();
 		if (player == null) return;
-		int levelStartAtOne = this._model.getDonationLevel(1);
+
 		boolean hasGroupNewBefore = ZPermissionsFacade.hasPermissionGroup(player, "New");
-		this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
-		boolean hasGroupNewAfter = ZPermissionsFacade.hasPermissionGroup(player, "New");
-		if (hasGroupNewBefore && !hasGroupNewAfter) {
-			verbose("maybePromotePlayer", "%s", "Permission group New has disappeared, added it again");
-			ZPermissionsFacade.addPermissionGroup(player, "New");
+		boolean changed = this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
+		if (hasGroupNewBefore) {
+			boolean hasGroupNewAfter = ZPermissionsFacade.hasPermissionGroup(player, "New");
+			if (hasGroupNewBefore && !hasGroupNewAfter) {
+				verbose("maybePromotePlayer", "%s", "Permission group New had disappeared, adding it again");
+				ZPermissionsFacade.addPermissionGroup(player, "New");
+			}
 		}
 		playerInfo.setPerkLevel(levelStartAtOne);
-		Config.M.levelChanged.sendMessage(player, levelStartAtOne);
+		if (changed) Config.M.levelChanged.sendMessage(player, levelStartAtOne);
 	}
-	
+
+	private void updatePerkLevel(int levelStartAtOne) 
+	{
+		for (PlayerInfo playerInfo : this._knownPlayers) {
+			updatePerkLevel(playerInfo, levelStartAtOne);
+		}	
+	}
+
 	public void delayedTeleportCheck(Player player)  {
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		scheduler.scheduleSyncDelayedTask(this._eithonPlugin, new Runnable() {
@@ -224,7 +237,7 @@ public class BoardController {
 				return !isInMandatoryWorld(player.getWorld());
 			}
 			public void afterDoneTask() {
-				verbose("playerTeleportedToBoard.CountDown", "Player is noted as has visited the board.");
+				verbose("playerTeleportedToBoard.CountDown", "Player has visited the board.");
 				register(player);
 			}
 			public void afterCancelTask() {
@@ -286,16 +299,6 @@ public class BoardController {
 		});
 	}
 
-	private void updatePerkLevel(int levelStartAtOne) 
-	{
-		for (PlayerInfo playerInfo : this._knownPlayers) {
-			Player player = playerInfo.getPlayer();
-			if (player == null) continue;
-			this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
-			playerInfo.setPerkLevel(levelStartAtOne);
-		}	
-	}
-
 	private PlayerInfo getOrAddPlayerInfo(Player player) {
 		PlayerInfo playerInfo = this._knownPlayers.get(player);
 		if (playerInfo == null) {
@@ -336,7 +339,7 @@ public class BoardController {
 
 	public void resetPlayer(Player player) {
 		PlayerInfo playerInfo = this._knownPlayers.get(player);
-		this._perkLevelLadder.updatePermissionGroups(player, 0);
+		this._perkLevelLadder.reset(player);
 		if (playerInfo == null) return;
 		this._knownPlayers.remove(player);
 	}
@@ -354,7 +357,7 @@ public class BoardController {
 				sameName ? "TRUE" : "FALSE");
 		return sameName;
 	}
-	
+
 	void verbose(String method, String format, Object... args) {
 		String message = String.format(format, args);
 		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE, "%s: %s", method, message);
