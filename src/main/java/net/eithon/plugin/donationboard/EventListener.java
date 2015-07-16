@@ -27,7 +27,7 @@ public final class EventListener implements Listener {
 	@EventHandler
 	public void onPlayerInteractEvent(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!isInMandatoryWorld(player.getWorld())) return;
+		if (!this._controller.isInMandatoryWorld(player.getWorld())) return;
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 		switch (event.getClickedBlock().getType()) {
 		case STONE_BUTTON:
@@ -49,19 +49,8 @@ public final class EventListener implements Listener {
 
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		if (!isInMandatoryWorld(event.getTo().getWorld())) return;
+		if (!this._controller.isInMandatoryWorld(event.getTo().getWorld())) return;
 		Player player = event.getPlayer();
 		this._controller.playerTeleportedToBoard(player, event.getFrom());
-	}
-
-	private boolean isInMandatoryWorld(World world) 
-	{
-		if (Config.V.mandatoryWorld == null) return true;
-		boolean sameName = world.getName().equalsIgnoreCase(Config.V.mandatoryWorld);
-		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE,
-				"Current world: \"%s\". Mandatory world: \"%s\". Same = %s", 
-				world.getName(), Config.V.mandatoryWorld, 
-				sameName ? "TRUE" : "FALSE");
-		return sameName;
 	}
 }

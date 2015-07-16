@@ -7,7 +7,8 @@ import net.eithon.library.json.FileContent;
 import net.eithon.library.json.PlayerCollection;
 import net.eithon.library.permissions.PermissionGroupLadder;
 import net.eithon.library.plugin.Logger.DebugPrintLevel;
-import net.eithon.library.time.AlarmTrigger;
+import net.eithon.library.time.ICountDownListener;
+import net.eithon.library.title.Title;
 import net.eithon.plugin.donationboard.Config;
 
 import org.bukkit.Bukkit;
@@ -201,19 +202,15 @@ public class BoardController {
 			return;
 		}
 		debug("playerTeleportedToBoard", "Set alarm");
-		AlarmTrigger.get().setAlarm(String.format("%s can claim perk", player.getName()),
-				Config.V.perkClaimAfterSeconds,
-				new Runnable() {
-			public void run() {
+		Title.get().CountDown(this._eithonPlugin, player, Config.V.perkClaimAfterSeconds, new ICountDownListener() {
+			public boolean shouldContinue(long remainingIntervals) {
 				debug("playerTeleportedToBoard.ALARM", "Checking if still in correct world");
-				if (isInMandatoryWorld(player.getWorld())) {
-					debug("playerTeleportedToBoard.ALARM", "In correct world");
-					register(player);
-				} else {
-					debug("playerTeleportedToBoard.ALARM", "Not in correct world");					
-				}
+				return isInMandatoryWorld(player.getWorld());
 			}
-		});	
+			public void finalTask() {
+				register(player);
+			}
+		});
 		debug("playerTeleportedToBoard", "Leave");
 	}
 
@@ -317,16 +314,26 @@ public class BoardController {
 				playerInfo.getTotalMoneyDonated()));	
 	}
 
-	boolean isInMandatoryWorld(World world) 
+	public void resetPlayer(Player player) {
+		this._knownPlayers.remove(player);
+	}
+
+	public boolean isInMandatoryWorld(World world) 
 	{
 		if (Config.V.mandatoryWorld == null) {
 			this._eithonPlugin.getEithonLogger().warning("No mandatory world set");
 			return true;
 		}
-		return world.getName().equalsIgnoreCase(Config.V.mandatoryWorld);
+		boolean sameName = world.getName().equalsIgnoreCase(Config.V.mandatoryWorld);
+		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE,
+				"Current world: \"%s\". Mandatory world: \"%s\". Same = %s", 
+				world.getName(), Config.V.mandatoryWorld, 
+				sameName ? "TRUE" : "FALSE");
+		return sameName;
 	}
 	
 	void debug(String method, String format, Object... args) {
-		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE, format, args);
+		String message = String.format(format, args);
+		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE, "%s: %s", method, message);
 	}
 }

@@ -2,6 +2,10 @@
 
 ## Release history
 
+### 1.4 (2015-07-16)
+
+* NEW: Added resetplayer command to reset player information.
+
 ### 1.3 (2015-07-14)
 
 * CHANGE: Added message to player when he/she needs to revisit the donation board.
