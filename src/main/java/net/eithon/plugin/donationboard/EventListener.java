@@ -1,10 +1,8 @@
 package net.eithon.plugin.donationboard;
 
 import net.eithon.library.extensions.EithonPlugin;
-import net.eithon.library.plugin.Logger.DebugPrintLevel;
 import net.eithon.plugin.donationboard.logic.BoardController;
 
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,10 +15,7 @@ public final class EventListener implements Listener {
 
 
 	private BoardController _controller;
-	private EithonPlugin _eithonPlugin;
-
 	public EventListener(EithonPlugin eithonPlugin, BoardController boardController) {	
-		this._eithonPlugin = eithonPlugin;
 		this._controller = boardController;
 	}
 

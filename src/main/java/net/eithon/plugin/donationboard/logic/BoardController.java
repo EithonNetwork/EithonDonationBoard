@@ -194,21 +194,25 @@ public class BoardController {
 			debug("playerTeleportedToBoard", "Leave");
 			return;
 		}
-		PlayerInfo playerInfo = this._knownPlayers.get(player);
+		PlayerInfo playerInfo = getOrAddPlayerInfo(player);
 		if (playerInfo.shouldGetPerks()) {	
 			debug("playerTeleportedToBoard", "Player %s will get a perk update without waiting.", player.getName());
 			register(player);
 			debug("playerTeleportedToBoard", "Leave");
 			return;
 		}
-		debug("playerTeleportedToBoard", "Set alarm");
+		debug("playerTeleportedToBoard", "Start countdown");
 		Title.get().CountDown(this._eithonPlugin, player, Config.V.perkClaimAfterSeconds, new ICountDownListener() {
-			public boolean shouldContinue(long remainingIntervals) {
-				debug("playerTeleportedToBoard.ALARM", "Checking if still in correct world");
-				return isInMandatoryWorld(player.getWorld());
+			public boolean isCancelled(long remainingIntervals) {
+				debug("playerTeleportedToBoard.CountDown", "Checking if still in correct world");
+				return !isInMandatoryWorld(player.getWorld());
 			}
-			public void finalTask() {
+			public void afterDoneTask() {
+				debug("playerTeleportedToBoard.CountDown", "Player is noted as has visited the board.");
 				register(player);
+			}
+			public void afterCancelTask() {
+				debug("playerTeleportedToBoard.CountDown", "Visit board cancelled.");
 			}
 		});
 		debug("playerTeleportedToBoard", "Leave");
@@ -315,6 +319,9 @@ public class BoardController {
 	}
 
 	public void resetPlayer(Player player) {
+		PlayerInfo playerInfo = this._knownPlayers.get(player);
+		this._perkLevelLadder.updatePermissionGroups(player, 0);
+		if (playerInfo == null) return;
 		this._knownPlayers.remove(player);
 	}
 
