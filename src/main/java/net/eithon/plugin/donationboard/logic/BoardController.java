@@ -3,6 +3,7 @@ package net.eithon.plugin.donationboard.logic;
 import java.io.File;
 
 import net.eithon.library.extensions.EithonPlugin;
+import net.eithon.library.facades.ZPermissionsFacade;
 import net.eithon.library.json.FileContent;
 import net.eithon.library.json.PlayerCollection;
 import net.eithon.library.permissions.PermissionGroupLadder;
@@ -181,41 +182,47 @@ public class BoardController {
 		Player player = playerInfo.getPlayer();
 		if (player == null) return;
 		int levelStartAtOne = this._model.getDonationLevel(1);
+		boolean hasGroupNewBefore = ZPermissionsFacade.hasPermissionGroup(player, "New");
 		this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
+		boolean hasGroupNewAfter = ZPermissionsFacade.hasPermissionGroup(player, "New");
+		if (hasGroupNewBefore && !hasGroupNewAfter) {
+			verbose("maybePromotePlayer", "%s", "Permission group New has disappeared, added it again");
+			ZPermissionsFacade.addPermissionGroup(player, "New");
+		}
 		playerInfo.setPerkLevel(levelStartAtOne);
 		Config.M.levelChanged.sendMessage(player, levelStartAtOne);
 	}
 
 	public void playerTeleportedToBoard(Player player, Location from) 
 	{
-		debug("playerTeleportedToBoard", "Enter player %s", player.getName());
+		verbose("playerTeleportedToBoard", "Enter player %s", player.getName());
 		if (!isInMandatoryWorld(player.getWorld())) {	
-			debug("playerTeleportedToBoard", "World %s is not accepted", player.getWorld().getName());
-			debug("playerTeleportedToBoard", "Leave");
+			verbose("playerTeleportedToBoard", "World %s is not accepted", player.getWorld().getName());
+			verbose("playerTeleportedToBoard", "Leave");
 			return;
 		}
 		PlayerInfo playerInfo = getOrAddPlayerInfo(player);
 		if (playerInfo.shouldGetPerks()) {	
-			debug("playerTeleportedToBoard", "Player %s will get a perk update without waiting.", player.getName());
+			verbose("playerTeleportedToBoard", "Player %s will get a perk update without waiting.", player.getName());
 			register(player);
-			debug("playerTeleportedToBoard", "Leave");
+			verbose("playerTeleportedToBoard", "Leave");
 			return;
 		}
-		debug("playerTeleportedToBoard", "Start countdown");
+		verbose("playerTeleportedToBoard", "Start countdown");
 		Title.get().CountDown(this._eithonPlugin, player, Config.V.perkClaimAfterSeconds, new ICountDownListener() {
 			public boolean isCancelled(long remainingIntervals) {
-				debug("playerTeleportedToBoard.CountDown", "Checking if still in correct world");
+				verbose("playerTeleportedToBoard.CountDown", "Checking if still in correct world");
 				return !isInMandatoryWorld(player.getWorld());
 			}
 			public void afterDoneTask() {
-				debug("playerTeleportedToBoard.CountDown", "Player is noted as has visited the board.");
+				verbose("playerTeleportedToBoard.CountDown", "Player is noted as has visited the board.");
 				register(player);
 			}
 			public void afterCancelTask() {
-				debug("playerTeleportedToBoard.CountDown", "Visit board cancelled.");
+				verbose("playerTeleportedToBoard.CountDown", "Visit board cancelled.");
 			}
 		});
-		debug("playerTeleportedToBoard", "Leave");
+		verbose("playerTeleportedToBoard", "Leave");
 	}
 
 	void refreshNow() {
@@ -339,7 +346,7 @@ public class BoardController {
 		return sameName;
 	}
 	
-	void debug(String method, String format, Object... args) {
+	void verbose(String method, String format, Object... args) {
 		String message = String.format(format, args);
 		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE, "%s: %s", method, message);
 	}

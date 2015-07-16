@@ -5,6 +5,7 @@
 ### 1.4 (2015-07-16)
 
 * NEW: Added resetplayer command to reset player information.
+* BUG: Bugfix for group New in zPermissons.
 
 ### 1.3 (2015-07-14)
 
