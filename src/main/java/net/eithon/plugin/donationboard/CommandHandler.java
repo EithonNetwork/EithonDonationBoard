@@ -18,6 +18,7 @@ public class CommandHandler implements ICommandHandler {
 	private static final String GOTO_COMMAND = "/donationboard goto";
 	private static final String DONATE_COMMAND = "/donationboard donate <player> <E-tokens> <amount>";
 	private static final String STATS_COMMAND = "/donationboard stats";
+	private static final String RESETPLAYER_COMMAND = "/donationboard resetplayer [<player>]";
 	
 	private BoardController _controller;
 
@@ -48,6 +49,8 @@ public class CommandHandler implements ICommandHandler {
 				gotoCommand(commandParser);
 			} else if (command.equals("stats")) {
 				statsCommand(commandParser);
+			} else if (command.equals("resetplayer")) {
+				resetPlayerCommand(commandParser);
 			} else {
 				return false;
 			}
@@ -73,6 +76,15 @@ public class CommandHandler implements ICommandHandler {
 		if (!commandParser.hasPermissionOrInformSender("donationboard.stats")) return;
 		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1, 1)) return;
 		this._controller.stats(commandParser.getPlayer());
+	}
+
+	public void resetPlayerCommand(CommandParser commandParser) {
+		if (!commandParser.hasPermissionOrInformSender("donationboard.resetplayer")) return;
+		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1, 2)) return;
+		
+		Player player = commandParser.getArgumentPlayer(commandParser.getPlayer());
+		if (player == null) return;
+		this._controller.resetPlayer(player);
 	}
 
 	void loadCommand(CommandParser commandParser)
@@ -147,6 +159,8 @@ public class CommandHandler implements ICommandHandler {
 			sender.sendMessage(GOTO_COMMAND);
 		} else if (command.equalsIgnoreCase("stats")) {
 			sender.sendMessage(STATS_COMMAND);
+		} else if (command.equalsIgnoreCase("resetplayer")) {
+			sender.sendMessage(RESETPLAYER_COMMAND);
 		} else {
 			sender.sendMessage(String.format("Unknown command: %s.", command));
 		}		
