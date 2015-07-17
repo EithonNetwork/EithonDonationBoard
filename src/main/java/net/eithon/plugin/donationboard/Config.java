@@ -43,6 +43,7 @@ public class Config {
 		public static ConfigurableMessage levelChanged;
 		public static ConfigurableMessage noTokensLeft;
 		public static ConfigurableMessage tokensLeft;
+		public static ConfigurableMessage noChangeInPerkLevel;
 
 		static void load(Configuration config) {
 			needTokens = config.getConfigurableMessage("messages.NeedTokens", 0,
@@ -59,6 +60,8 @@ public class Config {
 					"You have no E-tokens left.");
 			tokensLeft = config.getConfigurableMessage("messages.TokensLeft", 1,
 					"You have %d remaining E-tokens.");
+			noChangeInPerkLevel = config.getConfigurableMessage("messages.NoChangeInPerkLevel", 1,
+					"You have the correct perk level (%d).");
 		}		
 	}
 

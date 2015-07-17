@@ -141,10 +141,14 @@ public class BoardController {
 		}
 	}
 
-	public void register(Player player) {
+	public boolean register(Player player) {
 		PlayerInfo playerInfo = getOrAddPlayerInfo(player);
 		playerInfo.markAsHasBeenToBoard();
-		maybePromotePlayer(playerInfo);
+		boolean wasPromoted = maybePromotePlayer(playerInfo);
+		if (!wasPromoted && this._model != null) {
+			Config.M.noChangeInPerkLevel.sendMessage(player, this._model.getDonationLevel(1));
+		}
+		return wasPromoted;
 	}
 
 	public void donate(Player player, int tokens, double amount) {
@@ -175,16 +179,16 @@ public class BoardController {
 		maybePromotePlayer(playerInfo);
 	}
 
-	private void maybePromotePlayer(PlayerInfo playerInfo) {
-		if (this._model == null) return;
+	private boolean maybePromotePlayer(PlayerInfo playerInfo) {
+		if (this._model == null) return false;
 		int levelStartAtOne = playerInfo.shouldGetPerks() ? this._model.getDonationLevel(1) : 0;
-		updatePerkLevel(playerInfo, levelStartAtOne);
+		return updatePerkLevel(playerInfo, levelStartAtOne);
 	}
 
-	private void updatePerkLevel(PlayerInfo playerInfo, int levelStartAtOne) 
+	private boolean updatePerkLevel(PlayerInfo playerInfo, int levelStartAtOne) 
 	{
 		Player player = playerInfo.getPlayer();
-		if (player == null) return;
+		if (player == null) return false;
 
 		boolean hasGroupNewBefore = ZPermissionsFacade.hasPermissionGroup(player, "New");
 		boolean changed = this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
@@ -197,6 +201,7 @@ public class BoardController {
 		}
 		playerInfo.setPerkLevel(levelStartAtOne);
 		if (changed) Config.M.levelChanged.sendMessage(player, levelStartAtOne);
+		return changed;
 	}
 
 	private void updatePerkLevel(int levelStartAtOne) 
@@ -226,7 +231,7 @@ public class BoardController {
 		PlayerInfo playerInfo = getOrAddPlayerInfo(player);
 		if (playerInfo.shouldGetPerks()) {	
 			verbose("playerTeleportedToBoard", "Player %s will get a perk update without waiting.", player.getName());
-			register(player);
+			boolean wasUpdated = register(player);
 			verbose("playerTeleportedToBoard", "Leave");
 			return;
 		}

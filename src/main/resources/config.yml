@@ -1,10 +1,10 @@
 Days: 31
 MandatoryWorld: W_DonationBoard
-PerkClaimAfterSeconds: 20
+PerkClaimAfterSeconds: 10
 PerkLevelGroups: [PerkLevel1, PerkLevel2, PerkLevel3, PerkLevel4, PerkLevel5]
 
 eithon:
-  UseMarkUpForMessages: 0
+  UseMarkUpForMessages: 1
   UseWrappingForMessages: 0
   
   #
@@ -14,7 +14,24 @@ eithon:
   #  2 = MINOR (also minor messages)
   #  3 = VERBOSE (all messages)
   #
-  DebugLevel: 1
+  DebugLevel: 2
+
+commands:
+  #
+  # Parameters: <player>(%s) <perk level>(%d)
+  AddGroupCommand: perm player %s addgroup PerkLevel%d
+
+  #
+  # Parameters: <player>(%s) <perk level>(%d)
+  RemoveGroupCommand: perm player %s removegroup PerkLevel%d
+  
+  #
+  # Parameters: -
+  NoTokensLeft: You have no E-tokens left.
+
+  #
+  # Parameters: <remaining tokens> (%d)
+  TokensLeft: You have %d remaining E-tokens.
 
 messages:
   #
@@ -42,5 +59,9 @@ messages:
   VisitBoard: If you visit the donation board, you can raise your perk level to %d.
 
   #
+  # Parameters: <current perk level> (%d)
+  NoChangeInPerkLevel: You have the correct perk level (%d).
+
+  #
   # Parameters: <new perk level> (%d)
-  PerkLevelChanged: "!Your perk level\nhas been changed to %d"
+  PerkLevelChanged: "[title/][color=aqua]Perk Level %d[/color][subtitle/][color=darkaqua]You were added to Today's Perk Level![/color][actionbar/]Today's Sponsors; Not yet added!"
