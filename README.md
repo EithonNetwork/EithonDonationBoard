@@ -2,6 +2,10 @@
 
 ## Release history
 
+### 1.5 (2015-07-18)
+
+* NEW: New message for no change in perk level.
+
 ### 1.4 (2015-07-16)
 
 * NEW: Added resetplayer command to reset player information.
