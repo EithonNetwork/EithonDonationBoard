@@ -18,7 +18,6 @@ public final class Plugin extends EithonPlugin {
 		this._controller = new BoardController(this);
 		CommandHandler commandHandler = new CommandHandler(this, this._controller);
 		EventListener eventListener = new EventListener(this, this._controller);
-		AlarmTrigger.get().enable(this);
 		repeatShift();	
 		PlayerInfo.initialize(this);
 		super.activate(commandHandler, eventListener);
@@ -29,7 +28,6 @@ public final class Plugin extends EithonPlugin {
 	public void onDisable() {
 		super.onDisable();
 		this._controller = null;
-		AlarmTrigger.get().disable();
 	}
 
 	private void repeatShift() {
