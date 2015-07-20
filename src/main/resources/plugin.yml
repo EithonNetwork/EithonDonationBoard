@@ -1,6 +1,6 @@
 name: EithonDonationBoard
 main: net.eithon.plugin.donationboard.Plugin
-version: 1.5
+version: 1.5.1
 author: vanbrayne
 description: A Minecraft plugin for keeping scores of donations on a donation board
 depend: [EithonLibrary, zPermissions]

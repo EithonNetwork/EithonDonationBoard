@@ -2,6 +2,10 @@
 
 ## Release history
 
+### 1.5.1 (2015-07-20)
+
+* BUG: Now doesn't reset all plugin alarms when disabled.
+
 ### 1.5 (2015-07-18)
 
 * NEW: New message for no change in perk level.
