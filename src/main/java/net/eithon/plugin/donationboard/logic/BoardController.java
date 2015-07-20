@@ -231,7 +231,7 @@ public class BoardController {
 		PlayerInfo playerInfo = getOrAddPlayerInfo(player);
 		if (playerInfo.shouldGetPerks()) {	
 			verbose("playerTeleportedToBoard", "Player %s will get a perk update without waiting.", player.getName());
-			boolean wasUpdated = register(player);
+			register(player);
 			verbose("playerTeleportedToBoard", "Leave");
 			return;
 		}
