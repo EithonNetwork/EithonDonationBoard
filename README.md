@@ -2,6 +2,10 @@
 
 ## Release history
 
+### 1.6 (2015-07-23)
+
+* NEW: Added a /donationboard playerstats command.
+
 ### 1.5.1 (2015-07-20)
 
 * BUG: Now doesn't reset all plugin alarms when disabled.

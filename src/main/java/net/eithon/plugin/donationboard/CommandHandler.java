@@ -18,6 +18,7 @@ public class CommandHandler implements ICommandHandler {
 	private static final String GOTO_COMMAND = "/donationboard goto";
 	private static final String DONATE_COMMAND = "/donationboard donate <player> <E-tokens> <amount>";
 	private static final String STATS_COMMAND = "/donationboard stats";
+	private static final String PLAYER_STATS_COMMAND = "/donationboard playerstats <player>";
 	private static final String RESETPLAYER_COMMAND = "/donationboard resetplayer [<player>]";
 	
 	private BoardController _controller;
@@ -49,6 +50,8 @@ public class CommandHandler implements ICommandHandler {
 				gotoCommand(commandParser);
 			} else if (command.equals("stats")) {
 				statsCommand(commandParser);
+			} else if (command.equals("playerstats")) {
+				playerStatsCommand(commandParser);
 			} else if (command.equals("resetplayer")) {
 				resetPlayerCommand(commandParser);
 			} else {
@@ -76,6 +79,16 @@ public class CommandHandler implements ICommandHandler {
 		if (!commandParser.hasPermissionOrInformSender("donationboard.stats")) return;
 		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1, 1)) return;
 		this._controller.stats(commandParser.getPlayer());
+	}
+
+	public void playerStatsCommand(CommandParser commandParser) {
+		if (!commandParser.hasPermissionOrInformSender("donationboard.stats")) return;
+		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(2, 2)) return;
+		
+		Player player = commandParser.getArgumentPlayerOrInformSender(commandParser.getPlayer());
+		if (player == null) return;
+		
+		this._controller.stats(commandParser.getPlayer(), player);
 	}
 
 	public void resetPlayerCommand(CommandParser commandParser) {
@@ -159,6 +172,8 @@ public class CommandHandler implements ICommandHandler {
 			sender.sendMessage(GOTO_COMMAND);
 		} else if (command.equalsIgnoreCase("stats")) {
 			sender.sendMessage(STATS_COMMAND);
+		} else if (command.equalsIgnoreCase("playerstats")) {
+			sender.sendMessage(PLAYER_STATS_COMMAND);
 		} else if (command.equalsIgnoreCase("resetplayer")) {
 			sender.sendMessage(RESETPLAYER_COMMAND);
 		} else {
