@@ -2,6 +2,10 @@
 
 ## Release history
 
+### 1.7 (2015-08-10)
+
+* CHANGE: All time span configuration values are now in the general TimeSpan format instead of hard coded to seconds or minutes or hours.
+
 ### 1.6 (2015-07-23)
 
 * NEW: Added a /donationboard playerstats command.
