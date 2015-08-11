@@ -24,7 +24,7 @@ public class Config {
 		static void load(Configuration config) {
 			mandatoryWorld = config.getString("MandatoryWorld", "");
 			numberOfDays = config.getInt("Days", 31);
-			perkClaimAfterSeconds = config.getInt("PerkClaimAfterSeconds", 10);
+			perkClaimAfterSeconds = config.getSeconds("PerkClaimAfterTimeSpan", 10);
 			List<String> stringList = config.getStringList("PerkLevelGroups");
 			if (stringList == null) perkLevelGroups = new String[0];
 			else perkLevelGroups = stringList.toArray(new String[0]);

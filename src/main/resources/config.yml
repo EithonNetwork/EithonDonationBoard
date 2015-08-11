@@ -1,6 +1,6 @@
 Days: 31
 MandatoryWorld: W_DonationBoard
-PerkClaimAfterSeconds: 10
+PerkClaimAfterTimeSpan: 10s
 PerkLevelGroups: [PerkLevel1, PerkLevel2, PerkLevel3, PerkLevel4, PerkLevel5]
 
 eithon:
