@@ -1,7 +1,7 @@
 package net.eithon.plugin.donationboard.logic;
 
 import net.eithon.library.extensions.EithonBlock;
-import net.eithon.library.json.IJson;
+import net.eithon.library.json.JsonObject;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,7 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.json.simple.JSONObject;
 
-class BoardView implements IJson<BoardView> {
+class BoardView extends JsonObject<BoardView> {
 	private EithonBlock _startBlock;
 	int _stepX;
 	int _stepZ;
@@ -152,12 +152,7 @@ class BoardView implements IJson<BoardView> {
 		json.put("stepZ", this._stepZ);
 		return json;
 	}
-
-	@Override
-	public BoardView factory() {
-		return new BoardView();
-	}
-
+	
 	@Override
 	public BoardView fromJson(Object json) {
 		JSONObject jsonObject = (JSONObject) json;
@@ -169,5 +164,10 @@ class BoardView implements IJson<BoardView> {
 
 	public static BoardView createFromJson(JSONObject jsonObject) {
 		return new BoardView().fromJson(jsonObject);
+	}
+
+	@Override
+	public BoardView factory() {
+		return new BoardView();
 	}
 }

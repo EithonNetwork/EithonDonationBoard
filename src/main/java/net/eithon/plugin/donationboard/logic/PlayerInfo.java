@@ -5,14 +5,14 @@ import java.util.UUID;
 import net.eithon.library.core.IUuidAndName;
 import net.eithon.library.extensions.EithonPlayer;
 import net.eithon.library.extensions.EithonPlugin;
-import net.eithon.library.json.IJson;
+import net.eithon.library.json.JsonObject;
 import net.eithon.library.plugin.Logger.DebugPrintLevel;
 import net.eithon.plugin.donationboard.Config;
 
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
-public class PlayerInfo implements IJson<PlayerInfo>, IUuidAndName  {
+public class PlayerInfo extends JsonObject<PlayerInfo> implements IUuidAndName  {
 	private static EithonPlugin currentEithonPlugin;
 	
 	private EithonPlayer _eithonPlayer;
