@@ -3,7 +3,7 @@ package net.eithon.plugin.donationboard.logic;
 import java.io.File;
 
 import net.eithon.library.extensions.EithonPlugin;
-import net.eithon.library.facades.ZPermissionsFacade;
+import net.eithon.library.facades.PermissionsFacade;
 import net.eithon.library.json.FileContent;
 import net.eithon.library.json.PlayerCollection;
 import net.eithon.library.permissions.PermissionGroupLadder;
@@ -190,13 +190,13 @@ public class BoardController {
 		Player player = playerInfo.getPlayer();
 		if (player == null) return false;
 
-		boolean hasGroupNewBefore = ZPermissionsFacade.hasPermissionGroup(player, "New");
+		boolean hasGroupNewBefore = PermissionsFacade.hasPermissionGroup(player, "New");
 		boolean changed = this._perkLevelLadder.updatePermissionGroups(player, levelStartAtOne);
 		if (hasGroupNewBefore) {
-			boolean hasGroupNewAfter = ZPermissionsFacade.hasPermissionGroup(player, "New");
+			boolean hasGroupNewAfter = PermissionsFacade.hasPermissionGroup(player, "New");
 			if (hasGroupNewBefore && !hasGroupNewAfter) {
 				verbose("maybePromotePlayer", "%s", "Permission group New had disappeared, adding it again");
-				ZPermissionsFacade.addPermissionGroup(player, "New");
+				PermissionsFacade.addPermissionGroup(player, "New");
 			}
 		}
 		playerInfo.setPerkLevel(levelStartAtOne);

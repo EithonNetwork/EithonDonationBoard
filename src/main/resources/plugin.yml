@@ -3,7 +3,7 @@ main: net.eithon.plugin.donationboard.Plugin
 version: ${project.version}
 author: vanbrayne
 description: A Minecraft plugin for keeping scores of donations on a donation board
-depend: [EithonLibrary, zPermissions]
+depend: [EithonLibrary, PowerfulPerms]
 commands:
   donationboard:
     description: Control the donation board

@@ -2,6 +2,10 @@
 
 ## Release history
 
+### 1.9 (2016-05-01)
+
+* CHANGE: EithonLibrary now uses PowerPerms for permssions.
+
 ### 1.8 (2015-10-18)
 
 * CHANGE: Refactoring EithonLibrary.
