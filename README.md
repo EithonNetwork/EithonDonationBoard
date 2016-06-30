@@ -2,6 +2,10 @@
 
 ## Release history
 
+### 1.10 (2016-06-30)
+
+* CHANGE: Minecraft 1.10
+
 ### 1.9 (2016-05-01)
 
 * CHANGE: EithonLibrary now uses PowerPerms for permssions.

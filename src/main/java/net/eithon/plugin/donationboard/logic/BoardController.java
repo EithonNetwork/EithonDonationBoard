@@ -61,7 +61,7 @@ public class BoardController {
 	}
 
 	private void broadCastDonation(Player player) {
-		Config.M.playerHasDonated.broadcastMessage(player.getDisplayName());
+		Config.M.playerHasDonated.broadcastToThisServer(player.getDisplayName());
 	}
 
 	public void initialize(Player player, Block clickedBlock) {
@@ -97,7 +97,7 @@ public class BoardController {
 		if (fileContent == null) return;
 		JSONObject payload = (JSONObject)fileContent.getPayload();
 		if (payload == null) {
-			this._eithonPlugin.getEithonLogger().warning("The donation board payload was empty.");
+			this._eithonPlugin.logWarn("The donation board payload was empty.");
 			return;
 		}
 		this._view = BoardView.createFromJson((JSONObject)payload.get("view"));
@@ -352,7 +352,7 @@ public class BoardController {
 	public boolean isInMandatoryWorld(World world) 
 	{
 		if (Config.V.mandatoryWorld == null) {
-			this._eithonPlugin.getEithonLogger().warning("No mandatory world set");
+			this._eithonPlugin.logWarn("No mandatory world set");
 			return true;
 		}
 		boolean sameName = world.getName().equalsIgnoreCase(Config.V.mandatoryWorld);
