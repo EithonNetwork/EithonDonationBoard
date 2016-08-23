@@ -5,6 +5,7 @@ import net.eithon.library.json.JsonObject;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
@@ -46,11 +47,11 @@ class BoardView extends JsonObject<BoardView> {
 			for (int level = 1; level <= board.getNumberOfLevels(); level++) {
 				Block block = getBlock(day, level);
 				if (block == null) continue;
-				String blockPlayerName = getSkullOwner(block);
-				String modelPlayerName = board.getDonationInfo(day, level).getPlayerName();
-				if (modelPlayerName != null) {
+				OfflinePlayer blockPlayer = getSkullOwner(block);
+				OfflinePlayer modelPlayer = board.getDonationInfo(day, level).getOfflinePlayer();
+				if (modelPlayer != null) {
 					// A skull
-					if (blockPlayerName != modelPlayerName) createPlayerSkull(modelPlayerName, block);
+					if (blockPlayer != modelPlayer) createPlayerSkull(modelPlayer, block);
 				} else if (level == newDonationLevel+1) {
 					// A button
 					if (!isButton(block)) createDonationButton(block);
@@ -66,19 +67,19 @@ class BoardView extends JsonObject<BoardView> {
 			for (int level = 1; level <= board.getNumberOfLevels(); level++) {
 				Block block = getBlock(day, level);
 				if (block == null) continue;
-				String playerName = getSkullOwner(block);
-				if (playerName != null) board.markOnlyThis(day, level, playerName);
+				OfflinePlayer player = getSkullOwner(block);
+				if (player != null) board.markOnlyThis(day, level, player);
 			}
 		}
 	}
 
-	private String getSkullOwner(Block block)
+	private OfflinePlayer getSkullOwner(Block block)
 	{
 		if (block.getType() != Material.SKULL) return null;
 
 		Skull skull = (Skull)block.getState();
-		String playerName = skull.getOwner();
-		return playerName;
+		if (skull == null) return null;
+		return skull.getOwningPlayer();
 	}
 
 	private boolean isButton(Block block)
@@ -131,11 +132,11 @@ class BoardView extends JsonObject<BoardView> {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void createPlayerSkull(String playerName, Block block) {
+	private void createPlayerSkull(OfflinePlayer player, Block block) {
 		block.setType(Material.SKULL);
 		block.setData((byte) 4);
 		Skull skull = (Skull)block.getState();
-		skull.setOwner(playerName);
+		skull.setOwningPlayer(player);
 		skull.update();
 	}
 

@@ -1,5 +1,6 @@
 package net.eithon.plugin.donationboard.logic;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class BoardModel {
@@ -52,8 +53,8 @@ public class BoardModel {
 		return newClone;
 	}
 
-	public void markOnlyThis(int day, int level, String playerName) {
-		markOnlyThisInternal(day-1, level-1, playerName);
+	public void markOnlyThis(int day, int level, OfflinePlayer player) {
+		markOnlyThisInternal(day-1, level-1, player);
 	}
 
 	public Donation getDonationInfo(int day, int level) {
@@ -82,13 +83,13 @@ public class BoardModel {
 		}
 	}
 
-	private void markOnlyThisInternal(int dayIndex, int levelIndex, String playerName) {
+	private void markOnlyThisInternal(int dayIndex, int levelIndex, OfflinePlayer player) {
 		if (!isInsideBoardInternal(dayIndex, levelIndex)) return;
-		if (playerName == null)
+		if (player == null)
 		{
 			this._donations[dayIndex][levelIndex].setEmpty();		
 		} else {
-			this._donations[dayIndex][levelIndex].setDonation(playerName);			
+			this._donations[dayIndex][levelIndex].setDonation(player);			
 		}
 	}
 

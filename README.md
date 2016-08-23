@@ -5,6 +5,7 @@
 ### 1.11 (2016-08-23)
 
 * CHANGE: New PermissionFacade contract.
+* CHANGE: Took care of some deprecated stuff.
 
 ### 1.10 (2016-06-30)
 

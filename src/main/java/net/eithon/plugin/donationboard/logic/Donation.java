@@ -1,35 +1,28 @@
 package net.eithon.plugin.donationboard.logic;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 class Donation {
-	private String _playerName;
+	private OfflinePlayer _player;
 
 	public Donation()
 	{
-		this._playerName = null;
+		this._player = null;
 	}
 	
 	public void setEmpty()
 	{
-		this._playerName = null;
+		this._player = null;
 	}
 
-	public void setDonation(Player player)
+	public void setDonation(OfflinePlayer player)
 	{
-		this._playerName = player.getName();
-
-	}
-
-	public void setDonation(String playerName)
-	{
-		this._playerName = playerName;
+		this._player = player;
 
 	}
 
 	boolean isEmpty() {
-		return this._playerName == null;
+		return this._player == null;
 	}
 
 	boolean isDonation() {
@@ -37,14 +30,12 @@ class Donation {
 	}
 
 	String getPlayerName() {
-		return this._playerName;
+		return this._player.getName();
 	}
 	
-	@SuppressWarnings("deprecation")
-	Player getPlayer()
+	OfflinePlayer getOfflinePlayer()
 	{
-		if (this._playerName == null) return null;
-		return Bukkit.getPlayer(this._playerName);
+		return this._player;
 	}
 	
 	public String toString() {
@@ -52,10 +43,14 @@ class Donation {
 	}
 
 	public boolean isSame(Donation donationInfo) {
-		return this._playerName == donationInfo._playerName;
+		return this._player.getUniqueId() == donationInfo._player.getUniqueId();
+	}
+
+	public boolean isSamePlayer(OfflinePlayer player) {
+		return this._player.getUniqueId() == player.getUniqueId();
 	}
 
 	public void copy(Donation from) {
-		this._playerName = from._playerName;
+		this._player = from._player;
 	}
 }
