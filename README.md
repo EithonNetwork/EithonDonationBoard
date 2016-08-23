@@ -2,13 +2,17 @@
 
 ## Release history
 
+### 1.11 (2016-08-23)
+
+* CHANGE: New PermissionFacade contract.
+
 ### 1.10 (2016-06-30)
 
 * CHANGE: Minecraft 1.10
 
 ### 1.9 (2016-05-01)
 
-* CHANGE: EithonLibrary now uses PowerPerms for permssions.
+* CHANGE: EithonLibrary now uses PowerPerms for permissions.
 
 ### 1.8 (2015-10-18)
 
