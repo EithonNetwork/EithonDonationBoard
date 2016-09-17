@@ -14,6 +14,7 @@ import net.eithon.plugin.donationboard.Config;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -114,7 +115,7 @@ public class BoardController {
 			for (int level = 0; level <= Config.V.perkLevelGroups.length; level++) {
 				Donation donation = this._model.getDonationInfo(day, level);
 				if (donation == null) continue;
-				Player player = donation.getPlayer();
+				OfflinePlayer player = donation.getOfflinePlayer();
 				if (player == null) continue;
 				PlayerInfo playerInfo = getOrAddPlayerInfo(player);
 				playerInfo.setIsDonatorOnTheBoard(true);
@@ -128,7 +129,7 @@ public class BoardController {
 			for (int level = 0; level <= Config.V.perkLevelGroups.length; level++) {
 				Donation donation = this._model.getDonationInfo(day, level);
 				if (donation == null) continue;
-				if (donation.getPlayer() == player) return true;
+				if (donation.getOfflinePlayer() == player) return true;
 			}
 		}
 		return false;
@@ -286,7 +287,7 @@ public class BoardController {
 	private int markAsDonated(Player player, Block block) {
 		int day = this._view.calculateDay(block);
 		int level = this._view.calculateLevel(block);
-		this._model.markOnlyThis(day, level, player.getName());
+		this._model.markOnlyThis(day, level, player);
 		return day;
 	}
 
@@ -304,7 +305,7 @@ public class BoardController {
 		});
 	}
 
-	private PlayerInfo getOrAddPlayerInfo(Player player) {
+	private PlayerInfo getOrAddPlayerInfo(OfflinePlayer player) {
 		PlayerInfo playerInfo = this._knownPlayers.get(player);
 		if (playerInfo == null) {
 			playerInfo = new PlayerInfo(player);

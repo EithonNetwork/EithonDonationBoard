@@ -9,6 +9,7 @@ import net.eithon.library.json.JsonObject;
 import net.eithon.library.plugin.Logger.DebugPrintLevel;
 import net.eithon.plugin.donationboard.Config;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
@@ -28,7 +29,7 @@ public class PlayerInfo extends JsonObject<PlayerInfo> implements IUuidAndName  
 		currentEithonPlugin = eithonPlugin;
 	}
 
-	public PlayerInfo(Player player)
+	public PlayerInfo(OfflinePlayer player)
 	{
 		this._eithonPlayer = new EithonPlayer(player);
 		this._remainingDonationTokens = 0;
