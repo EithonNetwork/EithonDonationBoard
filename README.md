@@ -2,6 +2,10 @@
 
 ## Release history
 
+### 1.12 (2016-12-29)
+
+* CHANGE: Bukkit 1.11.
+
 ### 1.11 (2016-08-23)
 
 * CHANGE: New PermissionFacade contract.
